@@ -1,0 +1,32 @@
+{
+  "updatedAt": "2026-08-23T14:08:57.000Z",
+  "createdAt": "2026-04-14T18:57:49.007Z",
+  "id": "7B51rjZvWKKOGHFc",
+  "name": "Tracking",
+  "active": false,
+  "isArchived": true,
+  "nodes": [],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "27770f7a-084c-4222-b11c-c76c89737cea",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-04-14T18:57:49.011Z",
+      "createdAt": "2026-04-14T18:57:49.011Z",
+      "role": "workflow:owner",
+      "workflowId": "7B51rjZvWKKOGHFc",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
