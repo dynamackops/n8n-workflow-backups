@@ -1,0 +1,230 @@
+{
+  "updatedAt": "2026-03-05T19:35:48.000Z",
+  "createdAt": "2026-01-12T21:11:37.289Z",
+  "id": "oQ1s6s8syP99IHYOHmt2n",
+  "name": "My workflow 2",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Contact form",
+        "formDescription": "Contact us if you have any questions",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "First Name",
+              "placeholder": "please enter your first name"
+            },
+            {
+              "fieldLabel": "Last name",
+              "placeholder": "Please enter your last name"
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "Enter your email address"
+            },
+            {
+              "fieldLabel": "Description",
+              "placeholder": "Enter your issue description"
+            },
+            {
+              "fieldLabel": "Course type",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "n8n"
+                  },
+                  {
+                    "option": "make"
+                  },
+                  {
+                    "option": "zapier"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a80ff268-951a-419f-a6ac-c55f86f4f86a",
+      "name": "Contact form",
+      "webhookId": "a97a6562-c3a6-477c-bfa1-97ef3ecdda1b"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "[REDACTED]-Hep8-nY",
+          "mode": "list",
+          "cachedResultName": "Customer Data",
+          "cachedResultUrl": "https://docs.google.[REDACTED]-Hep8-nY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.[REDACTED]-Hep8-nY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "First Name": "=This is my {{ $json['First Name'] }}",
+            "Last Name": "={{ $json['Last name'] }}",
+            "Email": "={{ $json.Email }}",
+            "Description": "={{ $json.Description }}",
+            "Course Type": "={{ $json['Course type'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Course Type",
+              "displayName": "Course Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2f5e2e18-44c9-46bd-af91-6894d80b2e47",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mfGxpspt6hE8t3o1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "We received your inquiry- Thank you!",
+        "emailType": "text",
+        "message": "=We received your message and will respond within the 24 hours.\n\nThanks for contacting us!\n\nSupport Team",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "ceb14014-6e3e-4017-a0b3-d2f74fa53a6b",
+      "name": "Send a message",
+      "webhookId": "703543b9-e15b-4c70-b98a-5c0855d5b17c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GD1FWX4qmWrM3dyO",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Contact form": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "98ac33ab-c3d6-44ce-8a5b-500d28ba9601",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-01-12T21:11:37.291Z",
+      "createdAt": "2026-01-12T21:11:37.291Z",
+      "role": "workflow:owner",
+      "workflowId": "oQ1s6s8syP99IHYOHmt2n",
+      "projectId": "19c8hZxcT7dM3j2n"
+    }
+  ],
+  "activeVersion": null
+}
