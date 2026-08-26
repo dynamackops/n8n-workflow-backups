@@ -1,0 +1,133 @@
+{
+  "updatedAt": "2026-08-23T14:09:03.000Z",
+  "createdAt": "2026-04-25T00:08:37.949Z",
+  "id": "Utxqe19sEpx2doZP",
+  "name": "My workflow 4",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "d73c8fcb-e8d6-43e6-acb7-4f2b685b2d5f",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "59306a21-f57c-47c1-bd69-6c728bebe92e",
+      "name": "Webhook",
+      "webhookId": "d73c8fcb-e8d6-43e6-acb7-4f2b685b2d5f"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst screenshots = data.screenshots || [];\n\n// Build email body\nlet screenshotSection = screenshots.length > 0 \n  ? `\\n\\n📸 ${screenshots.length} screenshot(s) attached` \n  : '';\n\nreturn [{\n  json: {\n    ...data,\n    emailBody: `\nNEW SIGNL CYCLE FEEDBACK\n━━━━━━━━━━━━━━━━━━━━━━━\nFrom: ${data.name} (${data.email})\nUsing for: ${data.tenure}\nStars: ${data.star_rating}/5\nNPS: ${data.nps_score}/10\n\nWHAT THEY LOVE\n${data.what_they_love || 'Not provided'}\n\nBUG REPORTED: ${data.bug_reported}\n${data.bug_description ? 'Bug: ' + data.bug_description : ''}${screenshotSection}\n\nFEATURE REQUESTS\n${data.feature_requests || 'None selected'}\n\nCUSTOM IDEA\n${data.custom_idea || 'None'}\n\nOTHER NOTES\n${data.other || 'None'}\n\nSubmitted: ${data.submitted_at}\n    `.trim(),\n    hasScreenshots: screenshots.length > 0,\n    screenshotCount: screenshots.length\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        0
+      ],
+      "id": "d16f92d9-526c-45a7-b660-324015ab8a20",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "sendTo": "dynamackops@gmail.com",
+        "subject": "=Signl Feedback — {{ $json.name }} · {{ $json.star_rating }}★ · NPS {{ $json.nps_score }}",
+        "message": "={{ $json.emailBody }}",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "={{ $json.screenshots }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        384,
+        0
+      ],
+      "id": "0141650f-8157-4a94-ad3b-6cdff741c5db",
+      "name": "Send a message",
+      "webhookId": "5b977066-dea2-4644-aced-7503e65d309f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XVr5TpHD19VfVgmt",
+          "name": "dynamack gmail"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "name": "First item",
+          "code": 1
+        }
+      },
+      {
+        "json": {
+          "name": "Second item",
+          "code": 2
+        }
+      }
+    ]
+  },
+  "versionId": "c54b6550-2691-400c-a0bd-e41bc47e3c6d",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-04-25T00:08:37.952Z",
+      "createdAt": "2026-04-25T00:08:37.952Z",
+      "role": "workflow:owner",
+      "workflowId": "Utxqe19sEpx2doZP",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
