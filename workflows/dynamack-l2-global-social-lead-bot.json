@@ -1,0 +1,649 @@
+{
+  "updatedAt": "2026-08-23T14:11:21.000Z",
+  "createdAt": "2026-06-25T18:50:04.204Z",
+  "id": "TNTovIoAxidRoKJ8",
+  "name": "Dynamack × L2 Global — Social Lead Bot",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24
+            }
+          ]
+        }
+      },
+      "id": "67b6bb8d-122b-4358-a1bb-40385e1bdc6a",
+      "name": "Schedule — Daily 6AM ET",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/apify~instagram-hashtag-scraper/run-sync-get-dataset-items?token=YOUR_APIFY_API_KEY&timeout=120&memory=256",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"hashtags\": [\"sportsmemorabilia\", \"memorabiliabreaker\", \"autographbreaker\", \"sportsbreaker\", \"nflbreaker\", \"nbabreaker\"], \"resultsLimit\": 20 }",
+        "options": {
+          "timeout": 130000
+        }
+      },
+      "id": "17dae81f-9dc9-4064-ad04-67f8dd68d16e",
+      "name": "Apify — Scrape IG Hashtags",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        464,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/clockworks~tiktok-hashtag-scraper/run-sync-get-dataset-items?token=YOUR_APIFY_API_KEY&timeout=120&memory=256",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"hashtags\": [\"sportsmemorabilia\", \"memorabiliabreaker\", \"autographbreaker\", \"sportsbreaker\", \"nflbreaker\", \"nbabreaker\"], \"resultsPerPage\": 20 }",
+        "options": {
+          "timeout": 130000
+        }
+      },
+      "id": "3877b82e-8d66-43ff-a570-7f858a8a982e",
+      "name": "Apify — Scrape TikTok Hashtags",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        464,
+        208
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "71b9bd4b-80a1-4f0e-ab04-5474364b5fd9",
+      "name": "Merge — IG + TikTok",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        688,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize and deduplicate profiles from posts\nconst items = $input.all();\nconst seen = new Set();\nconst profiles = [];\n\nfor (const item of items) {\n  const d = item.json;\n\n  // Detect platform based on fields\n  const isIG = d.ownerUsername !== undefined;\n  const isTT = d.authorMeta !== undefined;\n\n  let username, fullName, bio, followers, profileUrl, caption, sourceHashtag, platform;\n\n  if (isIG) {\n    username = d.ownerUsername || '';\n    fullName = d.ownerFullName || '';\n    bio = d.ownerBiography || '';\n    followers = d.ownerFollowersCount || 0;\n    profileUrl = `https://instagram.com/${username}`;\n    caption = (d.caption || '').slice(0, 200);\n    sourceHashtag = (d.hashtags || [])[0] || 'sportsmemorabilia';\n    platform = 'Instagram';\n  } else if (isTT) {\n    username = d.authorMeta?.name || '';\n    fullName = d.authorMeta?.nickName || '';\n    bio = d.authorMeta?.signature || '';\n    followers = d.authorMeta?.fans || 0;\n    profileUrl = `https://tiktok.com/@${username}`;\n    caption = (d.text || '').slice(0, 200);\n    sourceHashtag = (d.challengeList || [{}])[0]?.title || 'sportsbreaker';\n    platform = 'TikTok';\n  } else {\n    continue;\n  }\n\n  if (!username) continue;\n\n  const key = `${platform}:${username.toLowerCase()}`;\n  if (seen.has(key)) continue;\n  seen.add(key);\n\n  profiles.push({\n    username: `@${username}`,\n    fullName,\n    bio,\n    followers,\n    profileUrl,\n    caption,\n    sourceHashtag,\n    platform,\n    business: 'L2 Global',\n    dateFound: new Date().toISOString().slice(0, 10)\n  });\n}\n\n// Cap at 15 per run to respect Groq rate limits\nreturn profiles.slice(0, 15).map(p => ({ json: p }));"
+      },
+      "id": "57039162-45c4-4d0e-8ad6-f0e4100b4c82",
+      "name": "Extract + Normalize Profiles",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        912,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Trq_SRvH9JHCpGm50jL4LOfAhHjxBYCL1qR3yeW2qBQ",
+          "mode": "list",
+          "cachedResultName": "Social_Lead_Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Trq_SRvH9JHCpGm50jL4LOfAhHjxBYCL1qR3yeW2qBQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 145238743,
+          "mode": "list",
+          "cachedResultName": "Dedup Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Trq_SRvH9JHCpGm50jL4LOfAhHjxBYCL1qR3yeW2qBQ/edit#gid=145238743"
+        },
+        "options": {}
+      },
+      "id": "fba72af9-4d2c-45d3-a935-d636836f6b21",
+      "name": "Sheets — Read Dedup Log",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1136,
+        128
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QaDo2XA2o6NaEvce",
+          "name": "Work Google"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const dedupRows = $('Sheets — Read Dedup Log').all().map(i => `${i.json['Platform']}:${(i.json['Username']||'').toLowerCase()}`);\nconst incoming = $('Extract + Normalize Profiles').all();\n\nconst newLeads = incoming.filter(item => {\n  const key = `${item.json.platform}:${item.json.username.toLowerCase()}`;\n  return !dedupRows.includes(key);\n});\n\nif (newLeads.length === 0) return [{ json: { skip: true, count: 0 } }];\nreturn newLeads;"
+      },
+      "id": "a50e4d76-c6ce-4834-a42b-596c1b7fa25a",
+      "name": "Dedup Check",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.skip }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and",
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "id": "c3028f3f-9626-4e54-a59a-20da59a83d4d",
+      "name": "Filter — Skip if No New Leads",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "[REDACTED]",
+        "genericAuthType": "[REDACTED]",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "llama-3.3-70b-versatile"
+            },
+            {
+              "name": "max_tokens",
+              "value": "={{ 600 }}"
+            },
+            {
+              "name": "messages",
+              "value": "={{ [{\"role\":\"system\",\"content\":\"You are a lead analyst for L2 Global, a sports memorabilia distributor with a Fanatics partnership. You analyze social media profiles to score their fit as potential memorabilia breaker partners and write a warm intro DM. A good lead is someone who actively breaks memorabilia or sports products on IG or TikTok. Return ONLY valid JSON no markdown: {\\\"fit_score\\\":\\\"Hot|Warm|Cold\\\",\\\"fit_reason\\\":\\\"\\\",\\\"is_breaker\\\":true,\\\"dm_draft\\\":\\\"\\\",\\\"niche_tags\\\":[],\\\"notes\\\":\\\"\\\"}\"},{\"role\":\"user\",\"content\":\"Analyze this social media profile for L2 Global memorabilia partnership fit.\\nPlatform: \" + $json.platform + \"\\nUsername: \" + $json.username + \"\\nFull Name: \" + $json.fullName + \"\\nBio: \" + $json.bio + \"\\nFollowers: \" + $json.followers + \"\\nRecent caption: \" + $json.caption + \"\\n\\nWrite a 2-3 sentence warm casual intro DM. No emojis overload. Don't pitch hard. Just introduce L2 Global and start a conversation.\"}] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7fcdf2df-b85a-42e7-bbd3-6fe87e6cccc4",
+      "name": "Groq — Score + DM Draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1792,
+        128
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "fSJHMfiQGZZ0CFeC",
+          "name": "[REDACTED] account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.choices[0].message.content;\nlet analysis;\ntry {\n  const cleaned = raw.replace(/```json|```/g, '').trim();\n  analysis = JSON.parse(cleaned);\n} catch(e) {\n  analysis = { fit_score: 'Cold', fit_reason: 'Parse error', is_breaker: false, dm_draft: 'Review manually', niche_tags: [], notes: 'Could not parse' };\n}\n\nconst profile = $('Dedup Check').first().json;\nreturn [{ json: { ...profile, ...analysis } }];"
+      },
+      "id": "1d8d361c-9b66-43d0-8ca2-ff56eda62896",
+      "name": "Parse Groq Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2016,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "[REDACTED]",
+        "team": "90141120847",
+        "space": "90145934482",
+        "folderless": true,
+        "list": "YOUR_L2_CLICKUP_LIST_ID",
+        "name": "={{ $json.fit_score === 'Hot' ? '🔥' : $json.fit_score === 'Warm' ? '🟡' : '🔵' }} {{ $json.username }} — {{ $json.platform }} — L2 Lead",
+        "additionalFields": {
+          "content": "=**Platform:** {{ $json.platform }}\n**Profile:** {{ $json.profileUrl }}\n**Followers:** {{ $json.followers }}\n**Bio:** {{ $json.bio }}\n\n**Fit Score:** {{ $json.fit_score }}\n**Fit Reason:** {{ $json.fit_reason }}\n**Is Active Breaker:** {{ $json.is_breaker }}\n\n**💬 DM Draft:**\n{{ $json.dm_draft }}\n\n**Source Hashtag:** #{{ $json.sourceHashtag }}\n**Date Found:** {{ $json.dateFound }}",
+          "priority": "={{ $json.fit_score === 'Hot' ? 1 : $json.fit_score === 'Warm' ? 2 : 3 }}",
+          "tags": []
+        }
+      },
+      "id": "a783551b-39f3-46fb-9925-50f27ac515ed",
+      "name": "ClickUp — Create Lead Task (L2)",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        2224,
+        128
+      ],
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "Zz37Scz5gW31lZQb",
+          "name": "Personal ClickUp OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.zohoapis.com/crm/v2/Leads",
+        "authentication": "[REDACTED]",
+        "genericAuthType": "[REDACTED]",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ data: [{ Last_Name: $('Parse Groq Response').first().json.username, First_Name: $('Parse Groq Response').first().json.fullName, Lead_Source: 'Social Media', Description: $('Parse Groq Response').first().json.bio + '\\n\\nDM Draft: ' + $('Parse Groq Response').first().json.dm_draft, Twitter: $('Parse Groq Response').first().json.username, Lead_Status: 'Not Contacted', Rating: $('Parse Groq Response').first().json.fit_score }] }) }}",
+        "options": {}
+      },
+      "id": "27579b2d-4fbc-4759-9b06-3c059deecaa5",
+      "name": "Zoho CRM (L2) — Create Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2448,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "[REDACTED]"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "L2 Lead Queue"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Username": "={{ $('Parse Groq Response').first().json.username }}",
+            "Full Name": "={{ $('Parse Groq Response').first().json.fullName }}",
+            "Platform": "={{ $('Parse Groq Response').first().json.platform }}",
+            "Profile URL": "={{ $('Parse Groq Response').first().json.profileUrl }}",
+            "Bio": "={{ $('Parse Groq Response').first().json.bio }}",
+            "Followers": "={{ $('Parse Groq Response').first().json.followers }}",
+            "Source Hashtag": "={{ $('Parse Groq Response').first().json.sourceHashtag }}",
+            "Date Found": "={{ $('Parse Groq Response').first().json.dateFound }}",
+            "Fit Score": "={{ $('Parse Groq Response').first().json.fit_score }}",
+            "Fit Reason": "={{ $('Parse Groq Response').first().json.fit_reason }}",
+            "Is Breaker?": "={{ $('Parse Groq Response').first().json.is_breaker ? 'Yes' : 'No' }}",
+            "DM Draft": "={{ $('Parse Groq Response').first().json.dm_draft }}",
+            "Status": "New",
+            "ClickUp Task ID": "={{ $('ClickUp — Create Lead Task (L2)').first().json.id }}"
+          }
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "id": "239fd9ab-b3e2-4db2-940c-ffcbec25a9ab",
+      "name": "Sheets — Add to L2 Queue",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2672,
+        128
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QaDo2XA2o6NaEvce",
+          "name": "Work Google"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "[REDACTED]"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Dedup Log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Username": "={{ $('Parse Groq Response').first().json.username }}",
+            "Platform": "={{ $('Parse Groq Response').first().json.platform }}",
+            "Business": "L2 Global",
+            "First Seen": "={{ $('Parse Groq Response').first().json.dateFound }}",
+            "Profile URL": "={{ $('Parse Groq Response').first().json.profileUrl }}"
+          }
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "id": "5b1ed477-fc56-437e-a1fe-af2968aeb37d",
+      "name": "Sheets — Log to Dedup",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2896,
+        128
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QaDo2XA2o6NaEvce",
+          "name": "Work Google"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "username"
+            },
+            {
+              "fieldToAggregate": "platform"
+            },
+            {
+              "fieldToAggregate": "fit_score"
+            },
+            {
+              "fieldToAggregate": "dm_draft"
+            },
+            {
+              "fieldToAggregate": "profileUrl"
+            },
+            {
+              "fieldToAggregate": "followers"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "51783937-45be-4b67-a463-2c8d3922bdd0",
+      "name": "Aggregate — Build DM Queue",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        3104,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "dynamackops@gmail.com",
+        "subject": "=🏆 L2 Global DM Queue — {{ $now.format('MMM d, yyyy') }} ({{ $json.username.length }} new leads)",
+        "message": "=<div style=\"font-family:sans-serif;max-width:680px;padding:24px;\">\n  <h2 style=\"color:#1A1A2E;border-bottom:3px solid #FF6B6B;padding-bottom:8px;\">🏆 L2 Global — Daily DM Queue</h2>\n  <p style=\"color:#666;\">{{ $json.username.length }} new breaker leads found on Instagram + TikTok. Review each below, copy the DM, go to their profile, and send manually.</p>\n  <table style=\"width:100%;border-collapse:collapse;margin-top:16px;font-size:13px;\">\n    <tr style=\"background:#1A1A2E;color:white;\">\n      <td style=\"padding:10px;\">Score</td>\n      <td style=\"padding:10px;\">Username</td>\n      <td style=\"padding:10px;\">Platform</td>\n      <td style=\"padding:10px;\">Followers</td>\n      <td style=\"padding:10px;\">DM Draft</td>\n    </tr>\n    {{ $json.username.map((u,i) => `<tr style=\"background:${i%2===0?'#f4f6fa':'white'};border-bottom:1px solid #eee;\"><td style=\"padding:10px;font-weight:bold;color:${$json.fit_score[i]==='Hot'?'#e53935':$json.fit_score[i]==='Warm'?'#F9A825':'#607D8B'};\">${$json.fit_score[i]}</td><td style=\"padding:10px;\"><a href=\"${$json.profileUrl[i]}\" style=\"color:#1A1A2E;font-weight:bold;\">${u}</a></td><td style=\"padding:10px;\">${$json.platform[i]}</td><td style=\"padding:10px;\">${Number($json.followers[i]).toLocaleString()}</td><td style=\"padding:10px;color:#444;font-style:italic;\">${$json.dm_draft[i]}</td></tr>`).join('') }}\n  </table>\n  <p style=\"margin-top:20px;color:#999;font-size:11px;\">Leads also added to ClickUp + Zoho CRM (L2 Global account). Update Status in ClickUp after you send each DM.</p>\n</div>",
+        "options": {}
+      },
+      "id": "3172569d-36bd-4fe2-abc2-2566d03f9bb8",
+      "name": "Gmail — L2 DM Queue Summary",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [
+        3328,
+        128
+      ],
+      "webhookId": "fa738580-c1cb-48a8-a672-8579c7e61f32",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IuziSZVWuidRU5ln",
+          "name": "personal"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule — Daily 6AM ET": {
+      "main": [
+        [
+          {
+            "node": "Apify — Scrape IG Hashtags",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Apify — Scrape TikTok Hashtags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify — Scrape IG Hashtags": {
+      "main": [
+        [
+          {
+            "node": "Merge — IG + TikTok",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify — Scrape TikTok Hashtags": {
+      "main": [
+        [
+          {
+            "node": "Merge — IG + TikTok",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge — IG + TikTok": {
+      "main": [
+        [
+          {
+            "node": "Extract + Normalize Profiles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract + Normalize Profiles": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Read Dedup Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Read Dedup Log": {
+      "main": [
+        [
+          {
+            "node": "Dedup Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dedup Check": {
+      "main": [
+        [
+          {
+            "node": "Filter — Skip if No New Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter — Skip if No New Leads": {
+      "main": [
+        [
+          {
+            "node": "Groq — Score + DM Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq — Score + DM Draft": {
+      "main": [
+        [
+          {
+            "node": "Parse Groq Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Groq Response": {
+      "main": [
+        [
+          {
+            "node": "ClickUp — Create Lead Task (L2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ClickUp — Create Lead Task (L2)": {
+      "main": [
+        [
+          {
+            "node": "Zoho CRM (L2) — Create Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zoho CRM (L2) — Create Lead": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Add to L2 Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Add to L2 Queue": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Log to Dedup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Log to Dedup": {
+      "main": [
+        [
+          {
+            "node": "Aggregate — Build DM Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate — Build DM Queue": {
+      "main": [
+        [
+          {
+            "node": "Gmail — L2 DM Queue Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "bd890b63-a7aa-4023-be2d-06d7c6346757",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-06-25T18:50:04.207Z",
+      "createdAt": "2026-06-25T18:50:04.207Z",
+      "role": "workflow:owner",
+      "workflowId": "TNTovIoAxidRoKJ8",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
