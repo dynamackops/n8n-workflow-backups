@@ -1,0 +1,49 @@
+{
+  "updatedAt": "2026-08-23T14:09:07.000Z",
+  "createdAt": "2026-05-03T22:38:45.498Z",
+  "id": "65nrIeiWC8HijCxV",
+  "name": "Signl Cycle Feedback Webhook",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "d94280f3-1da6-40f6-97fc-0d8c493e9cce",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "000f493a-434c-4412-88b1-a65dd33f5757",
+      "name": "Webhook",
+      "webhookId": "d94280f3-1da6-40f6-97fc-0d8c493e9cce"
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "03a261be-1635-4d6a-ae7d-223dd875539f",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-05-03T22:38:45.500Z",
+      "createdAt": "2026-05-03T22:38:45.500Z",
+      "role": "workflow:owner",
+      "workflowId": "65nrIeiWC8HijCxV",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
