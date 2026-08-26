@@ -1,0 +1,237 @@
+{
+  "updatedAt": "2026-08-23T14:13:32.000Z",
+  "createdAt": "2026-04-24T03:20:36.585Z",
+  "id": "AAUA2kckMeLA876X",
+  "name": "Clickup - Saved Flow",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "[REDACTED]",
+          "mode": "list",
+          "cachedResultName": "Job Application Pipeline",
+          "cachedResultUrl": "https://docs.google.[REDACTED]?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 970877642,
+          "mode": "list",
+          "cachedResultName": "Job Applications - Saved",
+          "cachedResultUrl": "https://docs.google.[REDACTED]#gid=970877642"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f49c1456-246f-4ae9-9b8b-f1b8920374a4",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "nsyNhTaaJOtG7BUc",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "[REDACTED]",
+        "team": "90141120847",
+        "space": "90145021226",
+        "folderless": true,
+        "list": "901415762058",
+        "name": "Complete application ",
+        "additionalFields": {
+          "content": "={{ $json['Job Link'] }}\n\nFound from: {{ $json.Platform }}",
+          "priority": 3,
+          "status": "saved",
+          "tags": [
+            "job apps",
+            "linkedin"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "72565600-c5bb-4b49-89ad-e28e2d0529b3",
+      "name": "Create a task",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "Zz37Scz5gW31lZQb",
+          "name": "ClickUp OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "[REDACTED]",
+          "mode": "list",
+          "cachedResultName": "Job Application Pipeline",
+          "cachedResultUrl": "https://docs.google.[REDACTED]?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 970877642,
+          "mode": "list",
+          "cachedResultName": "Job Applications - Saved",
+          "cachedResultUrl": "https://docs.google.[REDACTED]#gid=970877642"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Task ID": "={{$('Create a task').item.json.id}}",
+            "Job Link": "={{$('Google Sheets Trigger').item.json['Job Link']}}"
+          },
+          "matchingColumns": [
+            "Job Link"
+          ],
+          "schema": [
+            {
+              "id": "Job Link",
+              "displayName": "Job Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Platform",
+              "displayName": "Platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Task ID",
+              "displayName": "Task ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Applied?",
+              "displayName": "Applied?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        432,
+        0
+      ],
+      "id": "4fa17f21-563e-4cec-84f0-3296084586b9",
+      "name": "Update row in sheet with clickup task ID",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "IUmAthp1ArAwTVDK",
+          "name": "Google Sheets account 3"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Create a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a task": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet with clickup task ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "staticData": {
+    "node:Google Sheets Trigger": {
+      "documentId": "[REDACTED]",
+      "sheetId": 970877642,
+      "lastIndexChecked": 49
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "53ae78f6-dccb-45f8-b002-5aed52c5deb4",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-04-24T03:20:36.587Z",
+      "createdAt": "2026-04-24T03:20:36.587Z",
+      "role": "workflow:owner",
+      "workflowId": "AAUA2kckMeLA876X",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
