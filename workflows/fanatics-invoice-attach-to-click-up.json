@@ -1,0 +1,167 @@
+{
+  "updatedAt": "2026-08-23T14:09:16.000Z",
+  "createdAt": "2026-05-14T16:42:09.035Z",
+  "id": "JDXV4I1hT7rQc8Uc",
+  "name": "Fanatics Invoice attach to Click Up",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "attachment_0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        48
+      ],
+      "id": "9f22a8f3-37c6-4e5a-88ee-9e28128ff5d6",
+      "name": "Extract from PDF"
+    },
+    {
+      "parameters": {
+        "authentication": "[REDACTED]",
+        "team": "90141110503",
+        "space": "90144976312",
+        "folderless": true,
+        "list": "901416011677",
+        "name": "={{ $json.customerName }} - {{ $json.productDescription }}",
+        "additionalFields": {
+          "assignees": [
+            94467076
+          ],
+          "content": "={{ $json.orderDate }}\n\n{{ $json.customerName }} - {{ $json.invoiceNumber }}\n\n{{ $json.productDescription }}\n{{ $json.carrier }}\n\n{{ $json.trackingNumbers }}\n\n{{ $json.trackingLinks }}",
+          "priority": 3,
+          "tags": [
+            "tracking"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "083e85c6-6913-4e67-a379-6f236616a0c6",
+      "name": "Create a task in L2 tracking",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "YdeLZd1F8SMW0vfX",
+          "name": "SnL ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.clickup.com/api/v2/task/{{ $json.id }}/attachment",
+        "authentication": "[REDACTED]",
+        "nodeCredentialType": "[REDACTED]",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "=attachment",
+              "inputDataFieldName": "attachment_0"
+            },
+            {
+              "name": "filename",
+              "value": "=fanatics_invoice.pdf"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        416,
+        224
+      ],
+      "id": "eeca8b70-cea7-4adb-8fdd-c589398f9c08",
+      "name": "HTTP Request(attach PDF)",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "YdeLZd1F8SMW0vfX",
+          "name": "SnL ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const clickupData = $input.first().json;\nconst extractedBinary = $('Extract From PDF').first().binary;\n\n// Rename the field to match what your HTTP Request node expects\nreturn [{\n  json: clickupData,\n  binary: {\n    attachment_0: extractedBinary.data // maps 'data' → 'attachment_0'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        224
+      ],
+      "id": "28a21091-5fed-44b3-b293-0bf1ea791448",
+      "name": "Code in JavaScript (reattach binary pdf)"
+    }
+  ],
+  "connections": {
+    "Extract from PDF": {
+      "main": [
+        []
+      ]
+    },
+    "Create a task in L2 tracking": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript (reattach binary pdf)": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request(attach PDF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request(attach PDF)": {
+      "main": [
+        [
+          {
+            "node": "Create a task in L2 tracking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "availableInMCP": false,
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "0ec2e1f0-3003-4078-a00f-464debb063ea",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-05-14T16:42:09.038Z",
+      "createdAt": "2026-05-14T16:42:09.038Z",
+      "role": "workflow:owner",
+      "workflowId": "JDXV4I1hT7rQc8Uc",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
