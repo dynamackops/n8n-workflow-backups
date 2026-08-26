@@ -1,0 +1,210 @@
+{
+  "updatedAt": "2026-03-05T19:36:00.000Z",
+  "createdAt": "2026-01-13T19:59:25.100Z",
+  "id": "u20U3fq94OF_htGeAUTI-",
+  "name": "Send text notify through Trilio",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2a716e83-0f7a-49ea-b5f0-cd6b0cde746b",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1jhMF-uGu0n_sJXTPCy96Q1RpGwJ9UYdwfbbg9Mr38PE",
+          "mode": "list",
+          "cachedResultName": "Contacts_2026_01_13",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jhMF-uGu0n_sJXTPCy96Q1RpGwJ9UYdwfbbg9Mr38PE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1148532087,
+          "mode": "list",
+          "cachedResultName": "Contacts_2026_01_13",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jhMF-uGu0n_sJXTPCy96Q1RpGwJ9UYdwfbbg9Mr38PE/edit#gid=1148532087"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "252b9ce6-6fa5-42be-910c-c978bb8434e5",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QaDo2XA2o6NaEvce",
+          "name": "Google Sheets account 2"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "from": "=+18558142207",
+        "to": "={{ $json.Phone }}",
+        "message": "=🚨 Downtown Interest Check We’re exploring seeding Downtown case hits into select JuiceBoxes. These ultra-rare cards commonly sell in the $200–$1000+ range. Reply DOWNTOWN for priority consideration. \n\n⚠️ JB REGULAR UPDATE JB Regular is currently DISCONTINUED. Any future JB Regular drops will be exclusive to customers who complete the feedback survey. \n\n👉 Complete the survey for priority access: https://bit.ly/4qMj4S8\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "2bcf7c11-6220-41a9-a037-44f6b922cc65",
+      "name": "Send an SMS/MMS/WhatsApp message",
+      "credentials": {
+        "twilioApi": {
+          "id": "B6mjmo6XEXe8dtNd",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "from": "=+18558142207",
+        "to": "={{ $('Get row(s) in sheet1').item.json.Phone }}",
+        "message": "=🧃 Case Availability \n\n• Multisport (24 slabs) — 6 cases | Floor $20 | Ceiling $200 \n• Pokémon (24 slabs) — 10 cases | Floor $10 | Ceiling $100 \n• One Piece (24 slabs) — 10 cases | Floor $10 | Ceiling $100 \n\n🛒 Place an order here: https://bit.ly/3YG5y6D",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        832,
+        0
+      ],
+      "id": "f1d10da8-5020-4f48-a6a1-1663a8721d7a",
+      "name": "Send an SMS/MMS/WhatsApp message1",
+      "credentials": {
+        "twilioApi": {
+          "id": "B6mjmo6XEXe8dtNd",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1jhMF-uGu0n_sJXTPCy96Q1RpGwJ9UYdwfbbg9Mr38PE",
+          "mode": "list",
+          "cachedResultName": "Contacts_2026_01_13",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jhMF-uGu0n_sJXTPCy96Q1RpGwJ9UYdwfbbg9Mr38PE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1148532087,
+          "mode": "list",
+          "cachedResultName": "Contacts_2026_01_13",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jhMF-uGu0n_sJXTPCy96Q1RpGwJ9UYdwfbbg9Mr38PE/edit#gid=1148532087"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "First Name",
+              "lookupValue": "Jasmine Rips"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        0
+      ],
+      "id": "0455e772-ac84-40f3-9241-a87611d9150f",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QaDo2XA2o6NaEvce",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an SMS/MMS/WhatsApp message": {
+      "main": [
+        [
+          {
+            "node": "Send an SMS/MMS/WhatsApp message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Send an SMS/MMS/WhatsApp message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "75fe311b-4f78-445f-a625-9086b0b5c9ac",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-01-13T19:59:25.103Z",
+      "createdAt": "2026-01-13T19:59:25.103Z",
+      "role": "workflow:owner",
+      "workflowId": "u20U3fq94OF_htGeAUTI-",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
