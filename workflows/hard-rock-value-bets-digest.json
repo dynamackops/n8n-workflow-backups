@@ -1,0 +1,242 @@
+{
+  "updatedAt": "2026-08-24T00:41:09.000Z",
+  "createdAt": "2026-08-23T23:59:44.771Z",
+  "id": "NrOz1NONbXWEV673",
+  "name": "Hard Rock Value Bets Digest",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            },
+            {
+              "triggerAtHour": 12
+            },
+            {
+              "triggerAtHour": 16
+            }
+          ]
+        }
+      },
+      "id": "50948ba6-0ff6-42e8-a93b-6c01a201721e",
+      "name": "Morning, Midday, Evening",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.the-odds-api.com/v4/sports/upcoming/odds/",
+        "authentication": "[REDACTED]",
+        "genericAuthType": "[REDACTED]",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "regions",
+              "value": "us"
+            },
+            {
+              "name": "markets",
+              "value": "h2h"
+            },
+            {
+              "name": "oddsFormat",
+              "value": "american"
+            },
+            {
+              "name": "bookmakers",
+              "value": "hardrockbet,pinnacle"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "199169fd-12bd-410b-9ba7-9b2950960e92",
+      "name": "Fetch Odds",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "W4wDrO4qWqhCDj0o",
+          "name": "HTTP Query Auth-Odds"
+        },
+        "httpCustomAuth": {
+          "id": "t29Wpl5irticQ4yr",
+          "name": "Custom Auth account"
+        },
+        "httpBearerAuth": {
+          "id": "EJHSR5tRaCCiakBn",
+          "name": "odds"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst flagged = [];\nconst toProb = function(odds) { return odds > 0 ? 100 / (odds + 100) : (-odds) / (-odds + 100); };\n\nfor (const item of items) {\n  const game = item.json;\n  const bookmakers = game.bookmakers || [];\n  const hardRock = bookmakers.find(function(b) { return b.key === \"hardrockbet\"; });\n  const pinnacle = bookmakers.find(function(b) { return b.key === \"pinnacle\"; });\n  if (!hardRock || !pinnacle) continue;\n\n  const hrMarket = (hardRock.markets || []).find(function(m) { return m.key === \"h2h\"; });\n  const pinMarket = (pinnacle.markets || []).find(function(m) { return m.key === \"h2h\"; });\n  if (!hrMarket || !pinMarket) continue;\n\n  const pinOutcomes = pinMarket.outcomes || [];\n  const pinImplied = pinOutcomes.map(function(o) { return { name: o.name, prob: toProb(o.price) }; });\n  const pinTotal = pinImplied.reduce(function(sum, o) { return sum + o.prob; }, 0);\n  const pinTrue = pinImplied.map(function(o) { return { name: o.name, prob: o.prob / pinTotal }; });\n\n  const hrOutcomes = hrMarket.outcomes || [];\n  for (const hrOutcome of hrOutcomes) {\n    const trueEntry = pinTrue.find(function(o) { return o.name === hrOutcome.name; });\n    if (!trueEntry) continue;\n    const hrImplied = toProb(hrOutcome.price);\n    const edge = trueEntry.prob - hrImplied;\n    if (edge > 0.03) {\n      flagged.push({\n        matchup: (game.home_team || \"\") + \" vs \" + (game.away_team || \"\"),\n        sport: game.sport_title || \"\",\n        commenceTime: game.commence_time || \"\",\n        pick: hrOutcome.name,\n        hardRockOdds: hrOutcome.price,\n        impliedProbPct: Math.round(hrImplied * 1000) / 10,\n        trueProbPct: Math.round(trueEntry.prob * 1000) / 10,\n        edgePct: Math.round(edge * 1000) / 10\n      });\n    }\n  }\n}\n\nflagged.sort(function(a, b) { return b.edgePct - a.edgePct; });\n\nconst lines = flagged.map(function(f) {\n  return f.sport + \": \" + f.matchup + \"\\n  Pick: \" + f.pick + \" (\" + f.hardRockOdds + \")\\n  Hard Rock implies \" + f.impliedProbPct + \"% | sharp-market estimate \" + f.trueProbPct + \"% | edge +\" + f.edgePct + \"%\";\n});\n\nconst disclaimer = \"\\n\\n---\\nAutomated edge estimate based on Hard Rock vs. Pinnacle pricing. Not financial advice, no guarantee of outcome. Bet responsibly.\";\nconst emailBody = (lines.length > 0 ? lines.join(\"\\n\\n\") : \"No bets cleared the edge threshold this run.\") + disclaimer;\n\nreturn [{ json: { flaggedCount: flagged.length, emailBody: emailBody, picks: flagged } }];"
+      },
+      "id": "8a4aa1f3-40e2-4de7-96d6-5d0a20ed4753",
+      "name": "Find Value Bets",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.flaggedCount }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              },
+              "rightValue": 0
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "66b55f77-71cd-49d4-9925-96d463a2eb5b",
+      "name": "Has Value Bets?",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "mnevelus1@gmail.com",
+        "subject": "=Hard Rock Value Bets — {{ $now.toFormat(\"MMMM d\") }}",
+        "emailType": "text",
+        "message": "={{ $json.emailBody }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "00f269c7-f9d1-4b70-8486-d5000731f060",
+      "name": "Email Picks Digest",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        0
+      ],
+      "webhookId": "067b08e4-4be2-4708-acce-52e0ebe3b3ee",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XVr5TpHD19VfVgmt",
+          "name": "dynamack gmail"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Morning, Midday, Evening": {
+      "main": [
+        [
+          {
+            "node": "Fetch Odds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Odds": {
+      "main": [
+        [
+          {
+            "node": "Find Value Bets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Value Bets": {
+      "main": [
+        [
+          {
+            "node": "Has Value Bets?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Value Bets?": {
+      "main": [
+        [
+          {
+            "node": "Email Picks Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate"
+  },
+  "staticData": {
+    "node:Morning, Midday, Evening": {
+      "recurrenceRules": [
+        null,
+        null,
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null,
+        null,
+        null
+      ]
+    }
+  },
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "5cc3c224-0d32-4e04-a57c-a503b6241c09",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-08-23T23:59:44.773Z",
+      "createdAt": "2026-08-23T23:59:44.773Z",
+      "role": "workflow:owner",
+      "workflowId": "NrOz1NONbXWEV673",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
