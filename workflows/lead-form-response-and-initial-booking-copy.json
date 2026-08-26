@@ -1,0 +1,120 @@
+{
+  "updatedAt": "2026-08-23T14:12:18.000Z",
+  "createdAt": "2026-04-17T00:35:43.446Z",
+  "id": "Ds8tAQOpqq6v93gs",
+  "name": "Lead Form Response and Initial booking copy",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "[REDACTED]",
+          "mode": "list",
+          "cachedResultName": "Dynamack Ops",
+          "cachedResultUrl": "https://docs.google.[REDACTED]?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1335823889,
+          "mode": "list",
+          "cachedResultName": "LEADS (Pre Discovery)",
+          "cachedResultUrl": "https://docs.google.[REDACTED]#gid=1335823889"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8d2f9942-dcbc-4ca1-9205-f0ea03262699",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "nsyNhTaaJOtG7BUc",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json['2. Email'] }}",
+        "subject": "Thanks for reaching out to Dynamack Operations 🚀",
+        "emailType": "text",
+        "message": "=Hi {{ $json['1. Full name'] }}, Thank you for reaching out to Dynamack Operations! I’m excited to learn more about your business ({{ $json['4. Business/Brand Name'] }}). I've reviewed what you submitted and I'm already thinking through how I can help. The best next step is to book your free 20-minute strategy session so we can:\n\n• Get clear on what you're trying to solve or build\n• Identify the fastest path to a real solution\n• Map out exactly what working together would look like\n \n\nYou can book a time that works best for you here: Schedule your call: https://calendly.com/dynamackops/30min\n\nOnce you're booked, I'll come prepared with specific ideas based on what you shared — so we can make the most of our time.\n\nLooking forward to connecting.   \n\nBest, Jasmine Mack \nDynamack Operations LLC\nhttps://dynamackops.tiiny.site",
+        "options": {},
+        "path": "a4c6cb3d-767d-4bc2-8e73-895faf3d2550"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "9e032298-46d2-4399-b582-0060c73ef24b",
+      "name": "Send a message",
+      "webhookId": "a4c6cb3d-767d-4bc2-8e73-895faf3d2550",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XVr5TpHD19VfVgmt",
+          "name": "Gmail account 3"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Google Sheets Trigger": {
+      "documentId": "[REDACTED]",
+      "sheetId": 1335823889,
+      "lastIndexChecked": 4
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "333e4131-47e2-4443-aa69-39e53ebac631",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-04-17T00:36:08.632Z",
+      "createdAt": "2026-04-17T00:36:08.632Z",
+      "role": "workflow:owner",
+      "workflowId": "Ds8tAQOpqq6v93gs",
+      "projectId": "19c8hZxcT7dM3j2n"
+    }
+  ],
+  "activeVersion": null
+}
