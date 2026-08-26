@@ -1,0 +1,200 @@
+{
+  "updatedAt": "2026-08-23T14:30:15.651Z",
+  "createdAt": "2026-04-30T19:16:01.060Z",
+  "id": "lmgCJn8V3ZSq8TEc",
+  "name": "L2 Order Tracking",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "attachment_0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "9f22a8f3-37c6-4e5a-88ee-9e28128ff5d6",
+      "name": "Extract from PDF"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "sender": "info@l2global.com"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d861ac21-0d0e-4a28-a77b-358ba4508960",
+      "name": "Gmail sees FWD email",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XVr5TpHD19VfVgmt",
+          "name": "dynamack gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "[REDACTED]",
+        "team": "90141110503",
+        "space": "90144976312",
+        "folderless": true,
+        "list": "901416011677",
+        "name": "={{ $json.customerName }} - {{ $json.productDescription }}",
+        "additionalFields": {
+          "assignees": [
+            94467076
+          ],
+          "content": "={{ $json.orderDate }}\n\n{{ $json.customerName }} - {{ $json.invoiceNumber }}\n\n{{ $json.productDescription }}\n{{ $json.carrier }}\n\n{{ $json.trackingNumbers }}\n\n{{ $json.trackingLinks }}",
+          "priority": 3,
+          "tags": [
+            "tracking"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "083e85c6-6913-4e67-a379-6f236616a0c6",
+      "name": "Create a task in L2 tracking",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "YdeLZd1F8SMW0vfX",
+          "name": "SnL ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $input.first().json.text;\n\n// ===== TRACKING NUMBERS =====\nconst trackingNumbers = text.match(/1Z[A-Z0-9]{16}|\\b\\d{10,15}\\b/g) || [];\nconst filteredTracking = trackingNumbers.filter(t => {\n  if (t.length < 10) return false;\n  if (/^7\\d{11,12}$/.test(t)) return false;\n  if (/^[0-9]{10}$/.test(t) && parseInt(t) < 1000000000) return false;\n  const escaped = t.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&');\n  if (new RegExp(`[(/]${escaped}[)/]`).test(text)) return false;\n  return true;\n});\n\n// ===== CARRIER + TRACKING LINKS =====\nconst hasUPS = filteredTracking.some(t => t.startsWith('1Z'));\nconst hasFedEx = filteredTracking.some(t => !t.startsWith('1Z'));\nlet carrier = 'Unknown';\nif (hasUPS && !hasFedEx) carrier = 'UPS Ground';\nelse if (hasFedEx && !hasUPS) carrier = 'FedEx Freight';\nelse if (hasUPS && hasFedEx) carrier = 'UPS Ground + FedEx Freight';\n\nconst trackingLinks = filteredTracking.map(t => {\n  if (t.startsWith('1Z')) {\n    return `https://www.ups.com/track?tracknum=${t}`;\n  } else {\n    return `https://www.fedex.com/fedextrack/?trknbr=${t}`;\n  }\n}).join('\\n');\n\n// ===== CUSTOMER NAME =====\nlet shipToCompany = null;\nlet shipToContact = null;\nlet customerName = null;\n\nconst excludedNames = [\n  'L2 Global', 'Larry Legend', 'Fanatics', 'Matt Lane',\n  'Remit To', 'UPS', 'FedEx', 'USPS', 'Ground', 'Freight',\n  'Express', 'Priority', 'Pallet', 'Prepaid', 'TAMPA', 'PAGE',\n  'Invoice', 'Date', 'Customer ID', 'BILL TO', 'SHIP TO', 'Shalom Laber'\n];\n\nfunction isExcluded(name) {\n  if (!name) return true;\n  const lower = name.toLowerCase();\n  return excludedNames.some(e => lower.includes(e.toLowerCase()));\n}\n\nfunction cleanName(name) {\n  if (!name) return null;\n  let c = name.replace(/^(UPS|FedEx|USPS|DHL|Pallet|Prepaid)\\s*[-]?\\s*(Ground|Freight|Express|Priority|2Day|Overnight)?\\s*[-]?\\s*/gi, '').trim();\n  c = c.replace(/\\s+(UW|NFL|NHL|MLB|NBA|Helmet|Jersey|Jrsy|Auto|Vol|Volume|II|I)\\s*.*$/i, '').trim();\n  c = c.replace(/\\s+\\d+$/, '').trim();\n  return c || null;\n}\n\n// Method 1: Business name with known suffix\nconst bizMatch = text.match(/([A-Z][A-Za-z0-9 '&.-]*(?:Breaks|Breakers|Cards|Sports|Shop|Collectibles|Trading|Hobby|Enterprises|Break))/i);\nif (bizMatch && !isExcluded(bizMatch[1])) {\n  shipToCompany = bizMatch[1].trim();\n}\n\n// Method 2: First line of SHIP TO block — handles \"Fanatics/Customer Name\" pattern\nconst shipToMatch = text.match(/SHIP\\s*TO[:\\s]*\\n+([^\\n]+)/i);\nif (shipToMatch) {\n  let candidate = shipToMatch[1].trim();\n  if (/^fanatics\\//i.test(candidate)) {\n    candidate = candidate.split('/')[1].trim();\n  }\n  if (!isExcluded(candidate)) shipToContact = candidate;\n}\n\n// Method 3: Name before product keyword in PO field\nif (!shipToCompany && !shipToContact) {\n  const poNameMatch = text.match(/([A-Za-z][A-Za-z0-9 '&.-]+?)\\s+(?:UW|NFL|NHL|MLB|NBA)\\s+/i);\n  if (poNameMatch) {\n    const n = cleanName(poNameMatch[1]);\n    if (n && !isExcluded(n)) customerName = n;\n  }\n}\n\n// Method 4: Customer PO field — grab name before product keywords\nif (!shipToCompany && !shipToContact && !customerName) {\n  const poFieldMatch = text.match(/CUSTOMER\\s+P\\.?O\\.?\\s*NO\\.?[^\\n]*\\n([^\\n]+)/i);\n  if (poFieldMatch) {\n    const poVal = poFieldMatch[1].trim();\n    const nameBeforeProduct = poVal.match(/^([A-Za-z][A-Za-z0-9 '&.-]+?)\\s+(?:UW|NFL|NHL|MLB|NBA|UW26|London|Photo|Bat|Jersey|Helmet)/i);\n    if (nameBeforeProduct) {\n      const n = cleanName(nameBeforeProduct[1]);\n      if (n && !isExcluded(n)) customerName = n;\n    } else if (!isExcluded(poVal)) {\n      customerName = poVal;\n    }\n  }\n}\n\nlet shipToName = shipToCompany || shipToContact || customerName;\nif (shipToName) shipToName = cleanName(shipToName);\n\n// ===== FANATICS INVOICE NUMBER =====\nconst invoiceMatch = text.match(/I(\\d{8})/);\nconst invoiceNumber = invoiceMatch ? invoiceMatch[0] : null;\n\n// ===== PRODUCT DESCRIPTION =====\nconst productLines = [];\n\n// Grab every line that follows a barcode number\nconst barcodePattern = /\\d{12,13}\\s*\\n([^\\n]{10,})/g;\nlet barcodeMatch;\nwhile ((barcodeMatch = barcodePattern.exec(text)) !== null) {\n  const line = barcodeMatch[1].trim();\n  // Skip lines that are clearly not product descriptions\n  if (\n    !line.match(/^(TRACKING|TOTAL|SALES|SHIP|BILL|ORDER|PAGE|Remit)/i) &&\n    !line.match(/^\\d+\\.\\d+$/) &&\n    line.length > 5\n  ) {\n    productLines.push(line);\n  }\n}\n\n// Also catch (DO NOT OPEN) style descriptions\nconst doNotOpenPattern = /\\(DO NOT OPEN\\)\\s+([^\\n]+)/gi;\nlet doNotOpenMatch;\nwhile ((doNotOpenMatch = doNotOpenPattern.exec(text)) !== null) {\n  const line = doNotOpenMatch[1].trim();\n  if (!productLines.includes(line)) productLines.push(line);\n}\n\nconst productDescription = productLines.length > 0 \n  ? productLines.join(' / ') \n  : null;\n\n// ===== QTY SHIPPED =====\nlet qtyShipped = null;\nconst qtyMatch = text.match(/[A-Z0-9-]+\\s+([\\d.]+)\\s+EA\\s+([\\d.]+)/);\nif (qtyMatch) qtyShipped = parseFloat(qtyMatch[2]);\n\n// ===== ORDER TOTAL =====\nlet orderTotal = null;\nconst totalMatch = text.match(/TOTAL\\s*\\n?\\s*([\\d,]+\\.?\\d*)/i);\nif (totalMatch) orderTotal = parseFloat(totalMatch[1].replace(/,/g, ''));\n\n// ===== ORDER DATE =====\nconst dateMatch = text.match(/(\\d{1,2}\\/\\d{1,2}\\/\\d{4})/);\nconst orderDate = dateMatch ? dateMatch[0] : null;\n\n// ===== CARRIER CLEANUP =====\n// Double check carrier against Ship Via field in PDF\nif (carrier === 'Unknown' || carrier === 'UPS Ground') {\n  if (/UPS\\s+2\\s+Day/i.test(text)) carrier = 'UPS 2 Day';\n  else if (/UPS\\s+Ground/i.test(text)) carrier = 'UPS Ground';\n  else if (/FedEx\\s+Freight/i.test(text)) carrier = 'FedEx Freight';\n  else if (/FedEx/i.test(text)) carrier = 'FedEx';\n}\n\nreturn [{\n  json: {\n    customerName: shipToName,\n    invoiceNumber,\n    productDescription,\n    qtyShipped,\n    orderTotal,\n    carrier,\n    trackingLinks,\n    trackingCount: filteredTracking.length,\n    trackingNumbers: filteredTracking,\n    orderDate\n  },\n  binary: $input.first().binary\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "adbfbaf6-4381-41dc-8a84-da08e73cfb8b",
+      "name": "Code in parse JavaScript reading the PDF"
+    },
+    {
+      "parameters": {
+        "source": "parameter",
+        "workflowJson": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        832,
+        0
+      ],
+      "id": "2f7bbd77-bfb5-41f3-8423-9ad1b0d7bc86",
+      "name": "Execute Workflow"
+    }
+  ],
+  "connections": {
+    "Extract from PDF": {
+      "main": [
+        [
+          {
+            "node": "Code in parse JavaScript reading the PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail sees FWD email": {
+      "main": [
+        [
+          {
+            "node": "Extract from PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a task in L2 tracking": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in parse JavaScript reading the PDF": {
+      "main": [
+        [
+          {
+            "node": "Create a task in L2 tracking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "staticData": {
+    "node:Gmail sees FWD email": {
+      "Gmail sees FWD email": {
+        "lastTimeChecked": 1779135460,
+        "possibleDuplicates": [
+          "19e3cbccfb845979",
+          "19e2d71ca7666c26"
+        ]
+      }
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "178a654c-0246-435f-b36d-7756c6412faa",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-04-30T19:16:01.062Z",
+      "createdAt": "2026-04-30T19:16:01.062Z",
+      "role": "workflow:owner",
+      "workflowId": "lmgCJn8V3ZSq8TEc",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
