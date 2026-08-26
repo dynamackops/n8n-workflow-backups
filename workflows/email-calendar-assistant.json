@@ -1,0 +1,1061 @@
+{
+  "updatedAt": "2026-08-25T00:16:35.000Z",
+  "createdAt": "2026-08-16T00:20:41.261Z",
+  "id": "1epNIygY8gKtGVz9",
+  "name": "Email Calendar Assistant",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Email Calendar Assistant\nTriggered by an unread email whose subject matches \"Re: Your Morning Calendar Brief\" (i.e. you replying to the morning brief).\nReply \"tomorrow\" -> emails back tomorrow's agenda across all 3 accounts.\nReply \"week\" -> emails back the next 7 days across all 3 accounts.\nReply \"add: <event>\" -> parses it and creates a Google Calendar event on your Dynamack calendar, then confirms by email.\nAnything else -> gets a help reply.\nEach run marks the triggering email read so it is not reprocessed on the next poll.",
+        "height": 200,
+        "width": 300
+      },
+      "id": "e40b3b75-6ebd-445e-b25d-164228e03737",
+      "name": "Sticky Note 54062403",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "subject:\"Re: Your Morning Calendar Brief\"",
+          "readStatus": "unread"
+        },
+        "options": {},
+        "parameters": {
+          "filters": {
+            "q": "subject:\"Re: Your Morning Calendar Brief\" -from:jasminegm100@gmail.com"
+          }
+        }
+      },
+      "id": "8ef2cf0f-4b8e-4b8a-a3ba-189f3a46c29c",
+      "name": "Reply Received",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        768
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IuziSZVWuidRU5ln",
+          "name": "personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $json.id }}"
+      },
+      "id": "39c2e553-f5be-422d-8d95-34b442c2dfd8",
+      "name": "Mark As Read",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        656
+      ],
+      "webhookId": "e8554762-2205-4424-ba93-c0cbc5d5d183",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IuziSZVWuidRU5ln",
+          "name": "personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.text }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "rightValue": "add"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "add"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.text }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "rightValue": "tomorrow"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "tomorrow"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.text }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "rightValue": "week"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "week"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Help"
+        }
+      },
+      "id": "484e9cd3-ab76-48de-aab4-9306c168a549",
+      "name": "Route By Message",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        848
+      ]
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.text }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "summary",
+              "description": "The event title, stripped of any leading \"add\" or \"add:\" instruction",
+              "required": true
+            },
+            {
+              "name": "start",
+              "description": "Event start date/time in ISO 8601 (YYYY-MM-DDTHH:mm:ss) if a time is given, or YYYY-MM-DD if only a date is given. Assume year 2026 if no year is stated. Today is 2026-08-15.",
+              "required": true
+            },
+            {
+              "name": "allDay",
+              "type": "boolean",
+              "description": "True if no specific time was mentioned, only a date",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "05689a06-c83e-4335-b602-101b6b79a79e",
+      "name": "Extract Event Details",
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-6",
+          "cachedResultName": "Claude Sonnet 4.6"
+        },
+        "options": {}
+      },
+      "id": "01e6165d-cda7-413a-bf88-1f559325028c",
+      "name": "Anthropic Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.5,
+      "position": [
+        528,
+        224
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "XSQard4t45CA22na",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const extracted = $input.first().json.output || $input.first().json;\nconst allDay = !!extracted.allDay;\nconst summary = extracted.summary || 'New event';\nlet start = extracted.start;\nlet end;\n\nif (allDay) {\n  const startDate = new Date(start + 'T00:00:00');\n  const endDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000);\n  end = endDate.toISOString().slice(0, 10);\n} else {\n  const startDate = new Date(start);\n  const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);\n  start = startDate.toISOString();\n  end = endDate.toISOString();\n}\n\nconst messageId = $('Reply Received').first().json.id;\nreturn [{ json: { summary, start, end, allDay, messageId } }];"
+      },
+      "id": "e9f7c1a4-1a70-4638-a2f8-7639fb1a3163",
+      "name": "Prepare Event For Calendar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "dynamackops@gmail.com"
+        },
+        "start": "={{ $json.start }}",
+        "end": "={{ $json.end }}",
+        "additionalFields": {
+          "allday": "={{ $json.allDay ? \"yes\" : \"no\" }}",
+          "summary": "={{ $json.summary }}"
+        }
+      },
+      "id": "430b6fb2-ae02-4fc6-853e-5f7cacafda46",
+      "name": "Create Calendar Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1024,
+        112
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "7JZndbNGNly999DM",
+          "name": "Dynamack"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const created = $input.first().json;\nconst messageId = $('Prepare Event For Calendar').first().json.messageId;\nconst message = 'Added to your calendar: ' + (created.summary || 'your event');\nreturn [{ json: { message, messageId } }];"
+      },
+      "id": "af01e4e1-542a-43a2-83cb-27847e76bd3b",
+      "name": "Format Add Confirmation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $json.messageId }}",
+        "emailType": "text",
+        "message": "={{ $json.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "2b4527ab-c8a7-4316-b00d-05d996444468",
+      "name": "Reply With Add Confirmation",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1472,
+        112
+      ],
+      "webhookId": "84f35c5c-7ef2-4863-9569-5fcb74e4dfa8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IuziSZVWuidRU5ln",
+          "name": "personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\"dynamackops@gmail.com\", \"en.usa#holiday@group.v.calendar.google.com\"].map(id => ({ json: { calendarId: id } }));"
+      },
+      "id": "8df3a1d9-4ff2-4e56-a1d6-69efa61f03e3",
+      "name": "Dynamack Calendars - Tomorrow",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.calendarId }}"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $today.plus(1, \"days\").toISO() }}",
+        "timeMax": "={{ $today.plus(2, \"days\").toISO() }}",
+        "options": {
+          "orderBy": "startTime"
+        }
+      },
+      "id": "d7a87e10-d250-4aae-ae67-5c719f8bef1c",
+      "name": "Get Events - Dynamack Tomorrow",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        800,
+        400
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "7JZndbNGNly999DM",
+          "name": "Dynamack"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "id": "5ebec163-7397-4d1a-9429-cbe43b750409",
+      "name": "Combine Calendars - Tomorrow",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1024,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\"dynamackops@gmail.com\", \"en.usa#holiday@group.v.calendar.google.com\"].map(id => ({ json: { calendarId: id } }));"
+      },
+      "id": "d3f340ab-b9c6-4006-ad20-58d5251d832e",
+      "name": "Dynamack Calendars - Week",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.calendarId }}"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $today.toISO() }}",
+        "timeMax": "={{ $today.plus(7, \"days\").toISO() }}",
+        "options": {
+          "orderBy": "startTime"
+        }
+      },
+      "id": "5b192f59-e8b4-44ea-9208-e0c15c7c446f",
+      "name": "Get Events - Dynamack Week",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        800,
+        976
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "7JZndbNGNly999DM",
+          "name": "Dynamack"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "id": "4993477c-0b7d-4615-b6e0-0dec17e1448f",
+      "name": "Combine Calendars - Week",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1024,
+        1248
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const messageId = $('Reply Received').first().json.id;\nconst message = 'Reply \"tomorrow\" or \"week\" for your agenda, or \"add: <event and date>\" to add something to your calendar.';\nreturn [{ json: { message, messageId } }];"
+      },
+      "id": "2bad885e-fa67-465a-b9ea-ef6efebf9f06",
+      "name": "Format Help Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        1552
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $json.messageId }}",
+        "emailType": "text",
+        "message": "={{ $json.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "cfe1be5a-6653-4269-9293-c3e9f84b9f2d",
+      "name": "Reply With Help",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        1552
+      ],
+      "webhookId": "fcb1ab70-02cb-4c26-bd91-e0a90136ef4f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IuziSZVWuidRU5ln",
+          "name": "personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\"jasminegm100@gmail.com\"].map(id => ({ json: { calendarId: id } }));"
+      },
+      "id": "f5a62c88-fd4e-4dfb-a5e8-d53ac25ebf84",
+      "name": "Personal Calendars - Tomorrow",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.calendarId }}"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $today.plus(1, \"days\").toISO() }}",
+        "timeMax": "={{ $today.plus(2, \"days\").toISO() }}",
+        "options": {
+          "orderBy": "startTime"
+        }
+      },
+      "id": "f6c6ebc1-100d-44e1-a9c1-96a7bbd7dcd1",
+      "name": "Get Events - Personal Tomorrow",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        800,
+        592
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "EY2FNlGWepYg0rBi",
+          "name": "Personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\"jasmine@reioptimize.com\", \"c_a6997a80cc476ea56ea7133241d42b9d0d4881f823582588c20dc38697c0d82a@group.calendar.google.com\"].map(id => ({ json: { calendarId: id } }));"
+      },
+      "id": "9d28c21a-8421-4158-bd80-a8a952daa252",
+      "name": "TUB Calendars - Tomorrow",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        784
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.calendarId }}"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $today.plus(1, \"days\").toISO() }}",
+        "timeMax": "={{ $today.plus(2, \"days\").toISO() }}",
+        "options": {
+          "orderBy": "startTime"
+        }
+      },
+      "id": "4833ab3f-eafd-46e3-8a4a-b5f5005fb998",
+      "name": "Get Events - TUB Tomorrow",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        800,
+        784
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "qBA2Gl1lQPqZsacL",
+          "name": "TUB work"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\"jasminegm100@gmail.com\"].map(id => ({ json: { calendarId: id } }));"
+      },
+      "id": "ec1b75f2-c7f3-4047-aa53-fdbd1e511c79",
+      "name": "Personal Calendars - Week",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        1168
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.calendarId }}"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $today.toISO() }}",
+        "timeMax": "={{ $today.plus(7, \"days\").toISO() }}",
+        "options": {
+          "orderBy": "startTime"
+        }
+      },
+      "id": "9f360778-9dc8-46ea-b3a6-f130281b1c00",
+      "name": "Get Events - Personal Week",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        800,
+        1168
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "EY2FNlGWepYg0rBi",
+          "name": "Personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\"jasmine@reioptimize.com\", \"c_a6997a80cc476ea56ea7133241d42b9d0d4881f823582588c20dc38697c0d82a@group.calendar.google.com\"].map(id => ({ json: { calendarId: id } }));"
+      },
+      "id": "e4dea072-f062-4192-924f-7dbb3f619a75",
+      "name": "TUB Calendars - Week",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        1360
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.calendarId }}"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $today.toISO() }}",
+        "timeMax": "={{ $today.plus(7, \"days\").toISO() }}",
+        "options": {
+          "orderBy": "startTime"
+        }
+      },
+      "id": "8b345a6f-0b15-4c68-a8e0-b38a6a6de642",
+      "name": "Get Events - TUB Week",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        800,
+        1360
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "qBA2Gl1lQPqZsacL",
+          "name": "TUB work"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst tz = 'America/New_York';\nconst events = items.map(i => i.json).filter(e => e && (e.summary || e.start));\n\nevents.sort((a, b) => {\n  const aStart = (a.start && (a.start.dateTime || a.start.date)) || '';\n  const bStart = (b.start && (b.start.dateTime || b.start.date)) || '';\n  return aStart.localeCompare(bStart);\n});\n\nconst lines = [];\nif (events.length === 0) {\n  lines.push('Nothing on the calendar tomorrow.');\n} else {\n  for (const e of events) {\n    let timeStr;\n    if (e.start && e.start.dateTime) {\n      const dt = new Date(e.start.dateTime);\n      timeStr = dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: tz });\n    } else {\n      timeStr = 'All day';\n    }\n    lines.push(timeStr + ' - ' + (e.summary || '(no title)'));\n  }\n}\n\nconst message = 'Tomorrow:\\n\\n' + lines.join('\\n');\nconst messageId = $('Reply Received').first().json.id;\nreturn [{ json: { message, messageId } }];"
+      },
+      "id": "384046d6-fd70-4e4d-95a1-f7394dfd9d45",
+      "name": "Format Tomorrow Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $json.messageId }}",
+        "emailType": "text",
+        "message": "={{ $json.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "1b42b847-9a82-41d5-87b1-57eddc3728aa",
+      "name": "Reply With Tomorrow",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1472,
+        688
+      ],
+      "webhookId": "aaf064b3-d046-4ff3-85c4-8a646d4ab365",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IuziSZVWuidRU5ln",
+          "name": "personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst tz = 'America/New_York';\nconst events = items.map(i => i.json).filter(e => e && (e.summary || e.start));\n\nevents.sort((a, b) => {\n  const aStart = (a.start && (a.start.dateTime || a.start.date)) || '';\n  const bStart = (b.start && (b.start.dateTime || b.start.date)) || '';\n  return aStart.localeCompare(bStart);\n});\n\nconst lines = [];\nif (events.length === 0) {\n  lines.push('Nothing on the calendar this week.');\n} else {\n  for (const e of events) {\n    const start = e.start && (e.start.dateTime || e.start.date);\n    const dt = new Date(start);\n    let label;\n    if (e.start && e.start.dateTime) {\n      label = dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: tz }) +\n        ' ' + dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: tz });\n    } else {\n      label = dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: tz }) + ' (all day)';\n    }\n    lines.push(label + ' - ' + (e.summary || '(no title)'));\n  }\n}\n\nconst message = 'This week:\\n\\n' + lines.join('\\n');\nconst messageId = $('Reply Received').first().json.id;\nreturn [{ json: { message, messageId } }];"
+      },
+      "id": "e5654f66-ff4b-4ea8-83f7-1684625ef101",
+      "name": "Format Week Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        1264
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $json.messageId }}",
+        "emailType": "text",
+        "message": "={{ $json.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "0c9558d0-e9c1-4fce-9e34-73f693e23b82",
+      "name": "Reply With Week",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1472,
+        1264
+      ],
+      "webhookId": "f8eee3c4-019e-493a-9a45-1d00e41efd32",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IuziSZVWuidRU5ln",
+          "name": "personal"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Reply Received": {
+      "main": [
+        [
+          {
+            "node": "Mark As Read",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Route By Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route By Message": {
+      "main": [
+        [
+          {
+            "node": "Extract Event Details",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Dynamack Calendars - Tomorrow",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Personal Calendars - Tomorrow",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "TUB Calendars - Tomorrow",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Dynamack Calendars - Week",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Personal Calendars - Week",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "TUB Calendars - Week",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Help Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Event Details": {
+      "main": [
+        [
+          {
+            "node": "Prepare Event For Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extract Event Details",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Event For Calendar": {
+      "main": [
+        [
+          {
+            "node": "Create Calendar Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Calendar Event": {
+      "main": [
+        [
+          {
+            "node": "Format Add Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Add Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Reply With Add Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dynamack Calendars - Tomorrow": {
+      "main": [
+        [
+          {
+            "node": "Get Events - Dynamack Tomorrow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events - Dynamack Tomorrow": {
+      "main": [
+        [
+          {
+            "node": "Combine Calendars - Tomorrow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Calendars - Tomorrow": {
+      "main": [
+        [
+          {
+            "node": "Format Tomorrow Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dynamack Calendars - Week": {
+      "main": [
+        [
+          {
+            "node": "Get Events - Dynamack Week",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events - Dynamack Week": {
+      "main": [
+        [
+          {
+            "node": "Combine Calendars - Week",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Calendars - Week": {
+      "main": [
+        [
+          {
+            "node": "Format Week Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Help Email": {
+      "main": [
+        [
+          {
+            "node": "Reply With Help",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Personal Calendars - Tomorrow": {
+      "main": [
+        [
+          {
+            "node": "Get Events - Personal Tomorrow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events - Personal Tomorrow": {
+      "main": [
+        [
+          {
+            "node": "Combine Calendars - Tomorrow",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "TUB Calendars - Tomorrow": {
+      "main": [
+        [
+          {
+            "node": "Get Events - TUB Tomorrow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events - TUB Tomorrow": {
+      "main": [
+        [
+          {
+            "node": "Combine Calendars - Tomorrow",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Personal Calendars - Week": {
+      "main": [
+        [
+          {
+            "node": "Get Events - Personal Week",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events - Personal Week": {
+      "main": [
+        [
+          {
+            "node": "Combine Calendars - Week",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "TUB Calendars - Week": {
+      "main": [
+        [
+          {
+            "node": "Get Events - TUB Week",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events - TUB Week": {
+      "main": [
+        [
+          {
+            "node": "Combine Calendars - Week",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Format Tomorrow Email": {
+      "main": [
+        [
+          {
+            "node": "Reply With Tomorrow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Week Email": {
+      "main": [
+        [
+          {
+            "node": "Reply With Week",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": {
+    "node:Reply Received": {
+      "Reply Received": {
+        "lastTimeChecked": 1786968035,
+        "possibleDuplicates": [
+          "1a00f9881da46cc9"
+        ]
+      }
+    }
+  },
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "35894374-d3e9-4938-9a94-f58498a103d5",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-08-16T00:20:41.263Z",
+      "createdAt": "2026-08-16T00:20:41.263Z",
+      "role": "workflow:owner",
+      "workflowId": "1epNIygY8gKtGVz9",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
