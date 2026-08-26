@@ -1,0 +1,33 @@
+{
+  "updatedAt": "2026-08-23T14:08:29.000Z",
+  "createdAt": "2026-03-16T16:43:56.044Z",
+  "id": "myCYdzT2FHyg3t9n",
+  "name": "Fire Crawler",
+  "active": false,
+  "isArchived": true,
+  "nodes": [],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "054f33b1-e80b-453d-907f-118bbc50b3f5",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-03-16T16:43:56.046Z",
+      "createdAt": "2026-03-16T16:43:56.046Z",
+      "role": "workflow:owner",
+      "workflowId": "myCYdzT2FHyg3t9n",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
