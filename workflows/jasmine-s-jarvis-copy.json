@@ -1,0 +1,385 @@
+{
+  "updatedAt": "2026-08-23T14:09:32.000Z",
+  "createdAt": "2026-06-10T15:36:34.168Z",
+  "id": "FTfB9I5KrG0bKTYc",
+  "name": "Jasmine's Jarvis copy",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bb4163ce-da09-43d0-a36d-fafd04319aac",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "5a20956b-34ea-4eda-bcde-a7b741c5f3be",
+      "name": "Webhook — Jarvis Input",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1776,
+        400
+      ],
+      "webhookId": "bb4163ce-da09-43d0-a36d-fafd04319aac"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || $input.first().json;\nconst message = body.message || body.text || body.input || '';\nconst sessionId = body.session_id || 'default';\nconst domain = body.domain || null;\n\nif (!message) {\n  throw new Error('No message provided. Send { message: \"your text\", session_id: \"optional\" }');\n}\n\nreturn [{ json: { message, sessionId, domain, timestamp: new Date().toISOString() } }];"
+      },
+      "id": "0fb063ce-c65c-4afc-8fcb-79362d324051",
+      "name": "Parse Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1552,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "[REDACTED]",
+        "genericAuthType": "[REDACTED]",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.1-8b-instant\",\n  \"max_tokens\": 200,\n  \"temperature\": 0.1,\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a task classifier for a personal AI assistant called Jarvis. Given a user message, return ONLY a valid JSON object with these exact fields:\\n\\n{\\n  \\\"domain\\\": one of [\\\"dynamack\\\", \\\"signl_cycle\\\", \\\"creative\\\", \\\"l2_global\\\", \\\"job_search\\\", \\\"general\\\"],\\n  \\\"complexity\\\": one of [\\\"high\\\", \\\"medium\\\", \\\"low\\\"],\\n  \\\"task_type\\\": one of [\\\"strategy\\\", \\\"draft\\\", \\\"research\\\", \\\"score\\\", \\\"summarize\\\", \\\"code\\\", \\\"brainstorm\\\", \\\"other\\\"],\\n  \\\"one_liner\\\": a 5-8 word description of the task\\n}\\n\\nDomain guide:\\n- dynamack: client work, proposals, SOPs, Dynamack LLC, consultancy, freelance deliverables\\n- signl_cycle: PMDD, cycle tracking, DRSP, clinical, period health, premenstrual, Signl Cycle app\\n- creative: Berry the Bear, PMDD Bears, The Alien & The Monster, poetry, Jasmine Gabrielle, fiction, Redeemed & Remembered, Born from Fire, animation, IP bible\\n- l2_global: L2 Global, invoices, orders, tracking, fulfillment, Larry, Logan, Tim, Zoho, sports collectibles, BreakSaver, Lorcana\\n- job_search: job applications, cover letters, resume, scoring roles, Lane A, Lane B, Daily Job Digest\\n- general: everything else\\n\\nComplexity guide:\\n- high: multi-step strategy, architecture decisions, deep research, complex writing\\n- medium: standard drafts, coding tasks, analysis, summaries\\n- low: quick answers, scoring/filtering, classification, short lookups\\n\\nReturn ONLY the JSON object. No markdown, no explanation, no backticks.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"={{ $json.message }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "0fd232c1-ca3e-4664-a621-5f1fc75e42da",
+      "name": "Classify Intent (Groq — Llama 8B)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1328,
+        400
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MoHKaN2izfdJP5YA",
+          "name": "[REDACTED] Jarvis"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nconst content = raw.choices?.[0]?.message?.content || '{}';\n\nlet classification;\ntry {\n  const cleaned = content.replace(/```json|```/g, '').trim();\n  classification = JSON.parse(cleaned);\n} catch (e) {\n  classification = { domain: 'general', complexity: 'medium', task_type: 'other', one_liner: 'General request' };\n}\n\nconst prev = $('Parse Input').first().json;\n\n// Groq model routing:\n// high complexity   -> llama-3.3-70b-versatile (smartest, still free tier)\n// medium complexity -> llama-3.1-70b-versatile  (solid all-rounder)\n// low complexity    -> llama-3.1-8b-instant      (fastest, cheapest)\nconst modelMap = {\n  high:   'llama-3.3-70b-versatile',\n  medium: 'llama-3.1-70b-versatile',\n  low:    'llama-3.1-8b-instant'\n};\n\nconst model = modelMap[classification.complexity] || 'llama-3.1-70b-versatile';\n\nreturn [{\n  json: {\n    message: prev.message,\n    sessionId: prev.sessionId,\n    timestamp: prev.timestamp,\n    domain: classification.domain,\n    complexity: classification.complexity,\n    task_type: classification.task_type,\n    one_liner: classification.one_liner,\n    model\n  }\n}];"
+      },
+      "id": "7f724663-2822-4f58-9872-e9524bebcdbe",
+      "name": "Select Model + Domain",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1120,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const domain = $json.domain;\n\nconst systemPrompts = {\n  dynamack: `You are Jarvis, Jasmine Mack's personal AI assistant, operating in DYNAMACK MODE.\n\nJasmine runs Dynamack Operations LLC — an AI creative studio and automation consultancy. She builds n8n pipelines, React apps, and AI-powered tools for clients. She is also a fractional ops consultant.\n\nIn this mode your job is to help with:\n- Client proposals, SOPs, project scoping\n- Deliverable drafts (reports, audits, strategy docs)\n- Dynamack brand voice: confident, sharp, systems-minded, creative-tech forward\n- Automation architecture advice\n\nAlways sound like a senior ops strategist who also speaks fluent AI/tech. Be direct, professional, and high-signal.`,\n\n  signl_cycle: `You are Jarvis, Jasmine Mack's personal AI assistant, operating in SIGNL CYCLE MODE.\n\nSignl Cycle is Jasmine's clinical cycle-tracking app built on DRSP/DSM-5 methodology, focused on PMDD and premenstrual disorders. Jasmine uses it herself and advocates in this space.\n\nIn this mode your job is to help with:\n- PMDD and premenstrual disorder research\n- Clinical language, symptom frameworks, DRSP scoring\n- App feature thinking, user experience for cycle health\n- Advocacy content for IAPMD, PMDD Foundation outreach\n\nBe precise, evidence-informed, and compassionate. Use clinical terms accurately but translate them accessibly when needed.`,\n\n  creative: `You are Jarvis, Jasmine Mack's personal AI assistant, operating in CREATIVE MODE.\n\nJasmine is a multidisciplinary creator. Her projects include:\n- Berry the Bear / PMDD Bears: kawaii animated awareness series\n- The Alien & The Monster: animated narrative series\n- Poetry under pen name Jasmine Gabrielle (debut collection: Words I'll Never Say; in-progress: Born from Fire)\n- Christian fiction novel: Redeemed & Remembered (Rahab retelling)\n\nIn this mode your job is to help with:\n- Worldbuilding, IP bible development, character work\n- Script and story drafts\n- Poetry drafts (lyrical, faith-informed, emotionally raw)\n- Animation production planning\n\nMatch her voice: poetic, bold, faith-grounded, kawaii-adjacent in visual sensibility, emotionally honest.`,\n\n  l2_global: `You are Jarvis, Jasmine Mack's personal AI assistant, operating in L2 GLOBAL OPS MODE.\n\nJasmine is embedded at L2 Global, a sports collectibles distributor. She manages invoicing, order tracking, fulfillment workflows, and CRM mirroring via Google Sheets and n8n (she cannot build directly inside Zoho CRM).\n\nKey context:\n- Alan's 44 boxes = confirmed NBA jerseys in inventory\n- Jen handles SRPs for Marc\n- App process review with Jen is still pending\n- Vendors: BreakSaver, Lorcana, Temu marketplace\n- Colleagues: Larry (manager), Logan, Tim\n\nIn this mode your job is to help with:\n- Daily recap formatting (stat cards, color-coded sections, tracking grids)\n- Invoice and order tracking logic\n- Zoho-shadow automation ideas using Google Sheets + n8n\n- SOP drafting for ops tasks\n\nBe efficient, precise, and ops-focused.`,\n\n  job_search: `You are Jarvis, Jasmine Mack's personal AI assistant, operating in JOB SEARCH MODE.\n\nJasmine is actively job searching across two lanes:\n- Lane A: AI creative roles (creative technologist, AI animator, prompt engineer, content AI)\n- Lane B: Automation/architect roles (n8n, workflow automation, ops systems)\nAlso open to healthtech roles with a PMDD/cycle health angle.\n\nHer stack: n8n, React, Supabase, Groq/Llama, Google Sheets, Zoho, Tailwind, Netlify, Framer Motion.\nShe runs a Daily Job Digest n8n pipeline to surface and score leads.\n\nIn this mode your job is to help with:\n- Scoring job descriptions (fit, lane, excitement level)\n- Cover letter and outreach drafts (her voice: confident, mission-driven, creative-tech)\n- Resume tailoring\n- Application strategy\n\nBe honest about fit. Don't oversell weak matches. Her time is valuable.`,\n\n  general: `You are Jarvis, Jasmine Mack's personal AI assistant.\n\nJasmine is an AI creative technologist, automation builder, and fractional ops consultant based in Tampa/Sarasota. She runs Dynamack Operations LLC, is embedded at L2 Global, and is building Signl Cycle (a PMDD cycle-tracking app) and Berry the Bear (an animated awareness series). She is also a poet (pen name Jasmine Gabrielle) and has a goldendoodle named Luna.\n\nBe helpful, direct, and match her energy — sharp, systems-minded, creative, faith-grounded. You know her context well.`\n};\n\nconst systemPrompt = systemPrompts[domain] || systemPrompts.general;\n\nreturn [{ json: { ...$json, systemPrompt } }];"
+      },
+      "id": "33882329-528c-4625-9575-31122277566e",
+      "name": "Build System Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -896,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "name",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "name",
+          "value": "jasmine_jarvis"
+        },
+        "limit": 10,
+        "where": {
+          "values": [
+            {
+              "column": "session_id",
+              "value": "={{ $json.sessionId }}"
+            }
+          ]
+        },
+        "sort": {
+          "values": [
+            {
+              "column": "created_at"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7cbaac9d-e093-4cd0-b0ed-fcdc43d74d12",
+      "name": "Fetch Memory (Supabase)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -672,
+        400
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "qIofvxcScyq0I74l",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const current = $('Build System Prompt').first().json;\nconst memoryRows = $input.all().map(r => r.json).filter(r => r.session_id);\n\nconst historyMessages = memoryRows\n  .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))\n  .flatMap(row => [\n    { role: 'user', content: row.user_message },\n    { role: 'assistant', content: row.assistant_response }\n  ])\n  .filter(m => m.content);\n\nconst messages = [\n  { role: 'system', content: current.systemPrompt },\n  ...historyMessages,\n  { role: 'user', content: current.message }\n];\n\nreturn [{ json: { ...current, messages } }];"
+      },
+      "id": "93cee7ff-5ad4-4114-b90e-2ce6ecb1bd68",
+      "name": "Build Message History",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -448,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "[REDACTED]",
+        "genericAuthType": "[REDACTED]",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: $json.model, max_tokens: 4096, temperature: 0.7, messages: $json.messages }) }}",
+        "options": {}
+      },
+      "id": "eac95d72-047f-4f61-a7e0-f2da979c2020",
+      "name": "Call Groq (Routed Model)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -240,
+        400
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MoHKaN2izfdJP5YA",
+          "name": "[REDACTED] Jarvis"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const groqRes = $input.first().json;\nconst ctx = $('Build Message History').first().json;\n\nconst responseText = groqRes.choices?.[0]?.message?.content || 'No response generated.';\nconst modelUsed = groqRes.model || ctx.model;\nconst inputTokens = groqRes.usage?.prompt_tokens || 0;\nconst outputTokens = groqRes.usage?.completion_tokens || 0;\n\nreturn [{\n  json: {\n    sessionId: ctx.sessionId,\n    domain: ctx.domain,\n    complexity: ctx.complexity,\n    task_type: ctx.task_type,\n    one_liner: ctx.one_liner,\n    model_used: modelUsed,\n    input_tokens: inputTokens,\n    output_tokens: outputTokens,\n    user_message: ctx.message,\n    assistant_response: responseText,\n    timestamp: ctx.timestamp\n    tts_text: responseText.length > 500 ? responseText.slice(0, 497) + '...' : responseText,\n  }\n}];"
+      },
+      "id": "aadd2f19-cc09-4379-b6ca-509f4db67add",
+      "name": "Extract Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO jasmine_jarvis (session_id, domain, complexity, task_type, model_used, user_message, assistant_response, input_tokens, output_tokens)\nVALUES (\n  '{{ $json.sessionId }}',\n  '{{ $json.domain }}',\n  '{{ $json.complexity }}',\n  '{{ $json.task_type }}',\n  '{{ $json.model_used }}',\n  $${{ $json.user_message }}$$,\n  $${{ $json.assistant_response }}$$,\n  {{ $json.input_tokens }},\n  {{ $json.output_tokens }}\n);",
+        "options": {}
+      },
+      "id": "55bfe876-db54-4822-9feb-841c5fc22878",
+      "name": "Save to Memory (Supabase)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        208,
+        288
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "qIofvxcScyq0I74l",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"response\": {{ JSON.stringify($json.assistant_response) }},\n  \"meta\": {\n    \"domain\": {{ JSON.stringify($json.domain) }},\n    \"model\": {{ JSON.stringify($json.model_used) }},\n    \"task\": {{ JSON.stringify($json.one_liner) }},\n    \"tokens\": {\n      \"input\": {{ $json.input_tokens }},\n      \"output\": {{ $json.output_tokens }}\n    }\n  }\n}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "f02035bf-47ed-4cb1-be25-21d2a2e07cc7",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        208,
+        496
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook — Jarvis Input": {
+      "main": [
+        [
+          {
+            "node": "Parse Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Input": {
+      "main": [
+        [
+          {
+            "node": "Classify Intent (Groq — Llama 8B)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Intent (Groq — Llama 8B)": {
+      "main": [
+        [
+          {
+            "node": "Select Model + Domain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Model + Domain": {
+      "main": [
+        [
+          {
+            "node": "Build System Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build System Prompt": {
+      "main": [
+        [
+          {
+            "node": "Fetch Memory (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Memory (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Build Message History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Message History": {
+      "main": [
+        [
+          {
+            "node": "Call Groq (Routed Model)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Groq (Routed Model)": {
+      "main": [
+        [
+          {
+            "node": "Extract Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Response": {
+      "main": [
+        [
+          {
+            "node": "Save to Memory (Supabase)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "4b02537f-4732-4f1c-a52c-2177099984b8",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-06-10T15:36:34.171Z",
+      "createdAt": "2026-06-10T15:36:34.171Z",
+      "role": "workflow:owner",
+      "workflowId": "FTfB9I5KrG0bKTYc",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
