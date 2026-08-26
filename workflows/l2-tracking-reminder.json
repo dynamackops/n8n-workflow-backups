@@ -1,0 +1,96 @@
+{
+  "updatedAt": "2026-08-23T14:09:53.000Z",
+  "createdAt": "2026-07-21T15:15:35.267Z",
+  "id": "KAIqRgZG4pyFid7N",
+  "name": "L2 Tracking Reminder",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b94330bf-abe7-4bca-a210-2da3bbae38ac",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "authentication": "[REDACTED]",
+        "team": "90141110503",
+        "space": "90144976312",
+        "folderless": true,
+        "list": "901415254311",
+        "name": "Has this order been marked shipped?",
+        "additionalFields": {
+          "assignees": [
+            94467076
+          ],
+          "content": "check off the inventory shipped\n\nhttps://docs.google.com/spreadsheets/d/1jyjeIIwZulgXtv4SbC9mhsZ5fz_Sj0zRa7XWxd4781Q/edit?usp=sharing",
+          "priority": 3,
+          "status": "to do",
+          "tags": [
+            "ops"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "d7e94d33-2676-4d48-8539-6fbfa281dd70",
+      "name": "Create a task",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "YdeLZd1F8SMW0vfX",
+          "name": "SnL ClickUp account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Create a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "5b6c321b-a118-4ff8-8989-223c325c5e8c",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-07-21T15:15:35.270Z",
+      "createdAt": "2026-07-21T15:15:35.270Z",
+      "role": "workflow:owner",
+      "workflowId": "KAIqRgZG4pyFid7N",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
