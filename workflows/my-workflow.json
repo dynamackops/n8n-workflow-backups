@@ -1,0 +1,95 @@
+{
+  "updatedAt": "2026-03-05T19:35:36.000Z",
+  "createdAt": "2026-01-12T20:49:44.145Z",
+  "id": "45dDr7wky4Ypv7YCCIKcf",
+  "name": "My workflow",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "sendTo": "jasmine@snlent.com",
+        "subject": "Hello",
+        "message": "We are using n8n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        144,
+        0
+      ],
+      "id": "59d5f75e-4e42-498d-bc09-ad556d619d11",
+      "name": "Send a message",
+      "webhookId": "86eff2b2-e06d-4374-b833-384c073fce95",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GD1FWX4qmWrM3dyO",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            },
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "66e7b73e-a8b1-4c8d-8cee-b6bfb1d122db",
+      "name": "Schedule Trigger",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## this workflow send me an email every minute"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        400,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "797f1b8b-cd55-4269-9307-5e2d09176a8d",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "edf03aee-c713-42fa-be65-09b9c1855f3b",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-01-12T20:49:44.146Z",
+      "createdAt": "2026-01-12T20:49:44.146Z",
+      "role": "workflow:owner",
+      "workflowId": "45dDr7wky4Ypv7YCCIKcf",
+      "projectId": "19c8hZxcT7dM3j2n"
+    }
+  ],
+  "activeVersion": null
+}
