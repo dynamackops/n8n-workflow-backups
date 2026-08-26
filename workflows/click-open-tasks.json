@@ -1,0 +1,124 @@
+{
+  "updatedAt": "2026-08-23T14:09:45.000Z",
+  "createdAt": "2026-06-22T22:08:29.644Z",
+  "id": "OgttJDOG5ThUO5Bk",
+  "name": "Click Open Tasks",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4a499198-554a-4d45-b3bf-a066a62a9641",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "authentication": "[REDACTED]",
+        "operation": "getAll",
+        "team": "90141120847",
+        "space": "90145021226",
+        "folderless": true,
+        "list": "901415327002",
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "551246c7-424a-48d7-a02d-906d4e0d8813",
+      "name": "Get many tasks",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "Zz37Scz5gW31lZQb",
+          "name": "Personal ClickUp OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "=jasminegm100@gmail.com",
+        "subject": "You Got Tasks!",
+        "message": "=These are still on your to do list in clickup\n\n\n {{ $json.name }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "86e9e5bf-2dc1-48d9-bca8-df9764ad1cdd",
+      "name": "Send a message",
+      "webhookId": "4989292d-276f-4562-b8a0-ea0f7ee0c8d3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XVr5TpHD19VfVgmt",
+          "name": "dynamack gmail"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get many tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many tasks": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "5193767d-d022-46c4-b2b6-f9abc4d66ef3",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-06-22T22:08:29.651Z",
+      "createdAt": "2026-06-22T22:08:29.651Z",
+      "role": "workflow:owner",
+      "workflowId": "OgttJDOG5ThUO5Bk",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
