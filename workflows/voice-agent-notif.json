@@ -1,0 +1,239 @@
+{
+  "updatedAt": "2026-08-23T14:08:45.000Z",
+  "createdAt": "2026-03-05T22:45:56.427Z",
+  "id": "3tJRaAb5XW1jgN6L",
+  "name": "Voice Agent Notif",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 18
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "73d353f0-4006-4d3a-aa91-51f883c90ccc",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "dynamackops@gmail.com",
+          "mode": "list",
+          "cachedResultName": "dynamackops@gmail.com"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "3945aa22-b14e-4b4c-93f4-2998b8238784",
+      "name": "Get many events",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "7JZndbNGNly999DM",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "pythonCode": "from datetime import datetime, timezone, timedelta\n\n# Today's date in Eastern time\net_offset = timedelta(hours=-5)\ntoday = (datetime.now(timezone.utc) + et_offset).strftime('%Y-%m-%d')\n\n# Your sheet data comes in as items\nall_rows = [item['json'] for item in items]\n\n# Filter to today only\ntodays_submissions = [\n    row for row in all_rows\n    if row.get('Timestamp', '').startswith(today)\n]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "9d7826cb-8b89-4b04-94ad-da73345c0af9",
+      "name": "Code in Python"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "[REDACTED]",
+          "mode": "list",
+          "cachedResultName": "Dynamack Ops",
+          "cachedResultUrl": "https://docs.google.[REDACTED]?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1335823889,
+          "mode": "list",
+          "cachedResultName": "LEADS (Pre Discovery)",
+          "cachedResultUrl": "https://docs.google.[REDACTED]#gid=1335823889"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Timestamp",
+              "lookupValue": "="
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "de6a31b4-554d-4e01-ba35-096861aee3d2",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "IUmAthp1ArAwTVDK",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are a professional executive assistant for Jasmine at Dynamack Operations LLC.\n\nBased on the following lead data, generate TWO things:\n\n1. A natural, conversational VOICE SCRIPT (for a phone call) — warm but professional tone, like a smart assistant giving an end-of-day briefing. Keep it under 90 seconds when spoken.\n\n2. A clean EMAIL SUMMARY with the same information but formatted with bullet points.\n\nHere is today's data:\n{{ $json }}\n\nFormat your response exactly like this:\n\nVOICE_SCRIPT:\n[voice script here]\n\nEMAIL_SUMMARY:\n[email summary here]\n\nFor the voice script, refer to Jasmine by name. Mention total submissions, who booked, who hasn't booked yet, and any relevant client details. If nobody submitted today, keep it brief and positive."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        832,
+        0
+      ],
+      "id": "f58cfde6-823f-4f08-adc5-8df9034a558d",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "s8uHtq12l06vgkby",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "pythonCode": "# Get the ChatGPT response\nraw = items[0]['json']['message']['content']\n\n# Split into two sections\nvoice_script = raw.split('EMAIL_SUMMARY:')[0].replace('VOICE_SCRIPT:', '').strip()\nemail_summary = raw.split('EMAIL_SUMMARY:')[1].strip()\n\nreturn [{\n    'json': {\n        'voice_script': voice_script,\n        'email_summary': email_summary\n    }\n}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        0
+      ],
+      "id": "fc99de2a-d672-45d6-8dbb-d963dbcef0ac",
+      "name": "Code in Python1"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events": {
+      "main": [
+        [
+          {
+            "node": "Code in Python",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Get many events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in Python": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in Python1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "76237ccd-1a59-4de8-9614-fdab5b8c72fa",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-03-05T22:45:56.429Z",
+      "createdAt": "2026-03-05T22:45:56.429Z",
+      "role": "workflow:owner",
+      "workflowId": "3tJRaAb5XW1jgN6L",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
