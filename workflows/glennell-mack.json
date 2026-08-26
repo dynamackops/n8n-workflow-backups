@@ -1,0 +1,202 @@
+{
+  "updatedAt": "2026-08-23T14:30:41.418Z",
+  "createdAt": "2026-03-10T15:59:00.661Z",
+  "id": "4yFnIPKz2xebeeyi",
+  "name": "Glennell Mack",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                4,
+                6
+              ],
+              "triggerAtHour": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        64,
+        -112
+      ],
+      "id": "162de5ff-b573-4fac-a809-469eeb50de09",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "14lTNXUYqnafOn3PNi_3pz3E4Wsz4oxwiN0sv9gJnARM",
+          "mode": "list",
+          "cachedResultName": "New Bethel Membership Form (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14lTNXUYqnafOn3PNi_3pz3E4Wsz4oxwiN0sv9gJnARM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 841644131,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14lTNXUYqnafOn3PNi_3pz3E4Wsz4oxwiN0sv9gJnARM/edit#gid=841644131"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        464,
+        -112
+      ],
+      "id": "17f591bd-2266-4ebd-97fa-a77f71e62225",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "T5CUcEwxqV1Z4bnu",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "glennellmack@gmail.com",
+        "subject": "....",
+        "message": "..",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        -112
+      ],
+      "id": "385fb65f-aed0-4db3-a37b-cc95552ef13c",
+      "name": "Send a message",
+      "webhookId": "9d923402-6e53-4f17-ab61-3856e9927513",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GD1FWX4qmWrM3dyO",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        -112
+      ],
+      "id": "b7b21c8d-16b1-44f4-b100-39fc8bbf6244",
+      "name": "Execution Data"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "responses": {
+          "values": [
+            {}
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        832,
+        -112
+      ],
+      "id": "efceee00-7763-4acb-9151-f6f706563755",
+      "name": "Message a model"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Execution Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execution Data": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "5520818f-a3cc-4a5d-b122-270501232629",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-03-10T15:59:00.662Z",
+      "createdAt": "2026-03-10T15:59:00.662Z",
+      "role": "workflow:owner",
+      "workflowId": "4yFnIPKz2xebeeyi",
+      "projectId": "19c8hZxcT7dM3j2n"
+    }
+  ],
+  "activeVersion": null
+}
