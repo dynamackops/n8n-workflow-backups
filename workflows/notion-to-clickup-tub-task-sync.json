@@ -1,0 +1,245 @@
+{
+  "updatedAt": "2026-08-23T14:10:45.000Z",
+  "createdAt": "2026-08-13T16:36:38.319Z",
+  "id": "dJIo5lhI8QFpRVBK",
+  "name": "Notion to ClickUp TUB Task Sync",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            },
+            {
+              "triggerAtHour": 13
+            },
+            {
+              "triggerAtHour": 18
+            }
+          ]
+        }
+      },
+      "id": "458f0eb8-c14d-4947-85c1-c3af6c7bedb3",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "[REDACTED]",
+        "resource": "user",
+        "userId": "3b1d872b-594c-81fe-aa56-000237e892a4"
+      },
+      "id": "22801a0f-d95c-48c8-8349-657f1ac053c7",
+      "name": "Notion Tasks",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        544,
+        304
+      ],
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "dlTJmfSELciQFM9h",
+          "name": "TUB Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "team": "90141120847",
+        "space": "90147068758",
+        "folderless": true,
+        "list": "901419073563",
+        "filters": {}
+      },
+      "id": "7b95f9ac-dd81-47a1-9b6e-f07233c30f30",
+      "name": "ClickUp Existing Tasks",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        848,
+        304
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const notionTasks = $(\"Notion Tasks\").all().map(i => i.json);\nconst existingTasks = $input.all().map(i => i.json);\nconst results = [];\nfor (const t of notionTasks) {\n  const title = (t.name || t.title || \"\").toString().trim();\n  if (!title) continue;\n  const match = existingTasks.find(e => (e.name || \"\").trim().toLowerCase() === title.toLowerCase());\n  if (match) {\n    results.push({ json: { action: \"update\", clickupId: match.id, name: title } });\n  } else {\n    results.push({ json: { action: \"create\", name: title } });\n  }\n}\nreturn results;"
+      },
+      "id": "4480ab28-a7cc-486d-9039-baf55c49e413",
+      "name": "Match Tasks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1152,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.action }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "rightValue": "create"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "175252a9-de6d-435b-a8ef-2d5230377316",
+      "name": "Create or Update?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1440,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "team": "90141120847",
+        "space": "90147068758",
+        "folderless": true,
+        "list": "901419073563",
+        "name": "={{ $json.name }}",
+        "additionalFields": {}
+      },
+      "id": "68c16a74-ae5a-409f-9181-1b5df074dc23",
+      "name": "Create ClickUp Task",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1744,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.clickupId }}",
+        "updateFields": {
+          "name": "={{ $json.name }}"
+        }
+      },
+      "id": "80477724-2e40-4158-b287-a3e886448821",
+      "name": "Update ClickUp Task",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1744,
+        400
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Notion Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion Tasks": {
+      "main": [
+        [
+          {
+            "node": "ClickUp Existing Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ClickUp Existing Tasks": {
+      "main": [
+        [
+          {
+            "node": "Match Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Match Tasks": {
+      "main": [
+        [
+          {
+            "node": "Create or Update?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create or Update?": {
+      "main": [
+        [
+          {
+            "node": "Create ClickUp Task",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update ClickUp Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "63fc3a51-66fc-4783-9930-5ce11ef2809a",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-08-13T16:36:38.346Z",
+      "createdAt": "2026-08-13T16:36:38.346Z",
+      "role": "workflow:owner",
+      "workflowId": "dJIo5lhI8QFpRVBK",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
