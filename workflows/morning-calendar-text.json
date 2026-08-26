@@ -1,0 +1,367 @@
+{
+  "updatedAt": "2026-08-16T00:17:29.000Z",
+  "createdAt": "2026-08-15T17:35:29.181Z",
+  "id": "Msu36h9CdhMk786I",
+  "name": "Morning Calendar Text",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Morning Brief\nSends today's agenda by text at 6:00 AM daily, across all 3 Google accounts (Dynamack, Personal, TUB work).\nMake sure your n8n instance timezone is set to America/New_York (Settings) so this fires at 6 AM local time.",
+        "height": 200,
+        "width": 300
+      },
+      "id": "ad068c64-024c-4f8e-881d-dfff46010de4",
+      "name": "Sticky Note 3d0105e6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "id": "bcc05042-1c20-45fd-8ebd-e9ac8e691d35",
+      "name": "Every Morning 6AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\"dynamackops@gmail.com\", \"en.usa#holiday@group.v.calendar.google.com\"].map(id => ({ json: { calendarId: id } }));"
+      },
+      "id": "73e89ce9-02f2-4b58-b74c-25b522f79672",
+      "name": "Dynamack Calendars - Today",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.calendarId }}"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $today.toISO() }}",
+        "timeMax": "={{ $today.plus(1, \"days\").toISO() }}",
+        "options": {
+          "orderBy": "startTime"
+        }
+      },
+      "id": "abdbae41-3f0d-479e-bcea-02c29db4bb21",
+      "name": "Get Events - Dynamack",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        0
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "7JZndbNGNly999DM",
+          "name": "Dynamack"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "id": "d295c9a3-2438-4598-9d12-81b117d6b174",
+      "name": "Combine All Calendars",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        672,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\"jasminegm100@gmail.com\"].map(id => ({ json: { calendarId: id } }));"
+      },
+      "id": "308a6ae6-3eb8-4f90-92ed-82f0e8e695d8",
+      "name": "Personal Calendars - Today",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.calendarId }}"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $today.toISO() }}",
+        "timeMax": "={{ $today.plus(1, \"days\").toISO() }}",
+        "options": {
+          "orderBy": "startTime"
+        }
+      },
+      "id": "53479aea-150f-4530-a54f-2b485e5d72de",
+      "name": "Get Events - Personal",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        192
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "EY2FNlGWepYg0rBi",
+          "name": "Personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\"jasmine@reioptimize.com\", \"c_a6997a80cc476ea56ea7133241d42b9d0d4881f823582588c20dc38697c0d82a@group.calendar.google.com\"].map(id => ({ json: { calendarId: id } }));"
+      },
+      "id": "107184ff-2d56-4a91-9dde-11bba91042d8",
+      "name": "TUB Calendars - Today",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.calendarId }}"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $today.toISO() }}",
+        "timeMax": "={{ $today.plus(1, \"days\").toISO() }}",
+        "options": {
+          "orderBy": "startTime"
+        }
+      },
+      "id": "c6daa646-058b-4651-bb43-b2b07d90f243",
+      "name": "Get Events - TUB",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        384
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "qBA2Gl1lQPqZsacL",
+          "name": "TUB work"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst tz = 'America/New_York';\nconst events = items.map(i => i.json).filter(e => e && (e.summary || e.start));\n\nevents.sort((a, b) => {\n  const aStart = (a.start && (a.start.dateTime || a.start.date)) || '';\n  const bStart = (b.start && (b.start.dateTime || b.start.date)) || '';\n  return aStart.localeCompare(bStart);\n});\n\nconst lines = [];\nif (events.length === 0) {\n  lines.push('No events today. Enjoy the calm!');\n} else {\n  for (const e of events) {\n    let timeStr;\n    if (e.start && e.start.dateTime) {\n      const dt = new Date(e.start.dateTime);\n      timeStr = dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: tz });\n    } else {\n      timeStr = 'All day';\n    }\n    lines.push(timeStr + ' - ' + (e.summary || '(no title)'));\n  }\n}\n\nconst dateLabel = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: tz });\nconst message = 'Good morning! Here is ' + dateLabel + ':\\n\\n' + lines.join('\\n') +\n  '\\n\\nReply \"tomorrow\" or \"week\" for more, or \"add: <event>\" to add something new.';\n\nreturn [{ json: { message } }];"
+      },
+      "id": "fa6c0bc8-3fbe-44ab-bced-f124321bbaed",
+      "name": "Format Morning Text",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "from": "+17372583742",
+        "to": "+18135451675",
+        "message": "={{ $json.message }}",
+        "options": {}
+      },
+      "id": "22f2fd6a-db0c-49c1-b554-fc6486765dae",
+      "name": "Send Morning Text",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        192
+      ],
+      "credentials": {
+        "twilioApi": {
+          "id": "DV7EVriUcHY3sVGv",
+          "name": "dynamack twilio"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Every Morning 6AM": {
+      "main": [
+        [
+          {
+            "node": "Dynamack Calendars - Today",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Personal Calendars - Today",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "TUB Calendars - Today",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dynamack Calendars - Today": {
+      "main": [
+        [
+          {
+            "node": "Get Events - Dynamack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events - Dynamack": {
+      "main": [
+        [
+          {
+            "node": "Combine All Calendars",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine All Calendars": {
+      "main": [
+        [
+          {
+            "node": "Format Morning Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Personal Calendars - Today": {
+      "main": [
+        [
+          {
+            "node": "Get Events - Personal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events - Personal": {
+      "main": [
+        [
+          {
+            "node": "Combine All Calendars",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "TUB Calendars - Today": {
+      "main": [
+        [
+          {
+            "node": "Get Events - TUB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events - TUB": {
+      "main": [
+        [
+          {
+            "node": "Combine All Calendars",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Format Morning Text": {
+      "main": [
+        [
+          {
+            "node": "Send Morning Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate"
+  },
+  "staticData": {
+    "node:Every Morning 6AM": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    }
+  },
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "03ac09c5-07b8-47b7-99cb-c1029e99367c",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-08-15T17:35:29.184Z",
+      "createdAt": "2026-08-15T17:35:29.184Z",
+      "role": "workflow:owner",
+      "workflowId": "Msu36h9CdhMk786I",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
