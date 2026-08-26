@@ -1,0 +1,68 @@
+{
+  "updatedAt": "2026-03-05T19:36:02.000Z",
+  "createdAt": "2026-02-02T05:25:44.544Z",
+  "id": "PX4Riv4U587zjSJrYR_Rf",
+  "name": "My workflow 3",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "calendarId": {
+          "__rl": true,
+          "value": "dynamackops@gmail.com",
+          "mode": "list",
+          "cachedResultName": "dynamackops@gmail.com"
+        },
+        "triggerOn": "eventCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bd9f3014-5287-4692-8905-4fc4512f29e7",
+      "name": "Google Calendar Trigger",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "7JZndbNGNly999DM",
+          "name": "Google Calendar account"
+        }
+      }
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "6c170057-0814-4671-a330-74af7f3aae8a",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-02-02T05:25:44.547Z",
+      "createdAt": "2026-02-02T05:25:44.547Z",
+      "role": "workflow:owner",
+      "workflowId": "PX4Riv4U587zjSJrYR_Rf",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
