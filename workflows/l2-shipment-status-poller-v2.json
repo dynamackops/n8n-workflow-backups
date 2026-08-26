@@ -1,0 +1,414 @@
+{
+  "updatedAt": "2026-08-23T14:09:23.000Z",
+  "createdAt": "2026-06-02T20:49:09.973Z",
+  "id": "Jd51gGlN7Atxr3B4",
+  "name": "L2 Shipment Status Poller v2",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 14,19 * * 1-5"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -3616,
+        800
+      ],
+      "id": "396142b3-f227-48a7-bb46-0385984dee45",
+      "name": "10am and 3pm ET Mon-Fri"
+    },
+    {
+      "parameters": {
+        "authentication": "[REDACTED]",
+        "operation": "getAll",
+        "team": "90141110503",
+        "space": "90144976312",
+        "folderless": true,
+        "list": "901416011677",
+        "filters": {
+          "statuses": [
+            "jasmine tracking"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -3392,
+        800
+      ],
+      "id": "1d6d8e43-a582-42d8-9664-f43241b8d4bb",
+      "name": "Get Jasmine Tracking Tasks",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "YdeLZd1F8SMW0vfX",
+          "name": "SnL ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const tasks = $input.all();\nconst output = [];\n\nfor (const task of tasks) {\n  const t = task.json;\n  const desc = t.description || t.content || '';\n  const taskId = t.id;\n  const taskName = t.name || '';\n\n  // Pull customer name from task name (format: \"CustomerName - ProductDescription\")\n  const customerName = taskName.split(' - ')[0]?.trim() || 'Unknown';\n\n  // Pull product description from task name\n  const productDescription = taskName.split(' - ').slice(1).join(' - ').trim() || '';\n\n  // Extract invoice number\n  const invoiceMatch = desc.match(/I(\\d{8})/);\n  const invoiceNumber = invoiceMatch ? invoiceMatch[0] : '';\n\n  // Extract order date (first date in description)\n  const dateMatch = desc.match(/(\\d{1,2}\\/\\d{1,2}\\/\\d{4})/);\n  const orderDate = dateMatch ? dateMatch[0] : '';\n\n  // Extract carrier line\n  const carrierMatch = desc.match(/(UPS Ground|UPS 2 Day|FedEx Freight|FedEx)/i);\n  const carrier = carrierMatch ? carrierMatch[0] : 'Unknown';\n\n  // Extract UPS tracking numbers (1Z format)\n  const upsNumbers = desc.match(/1Z[A-Z0-9]{16}/g) || [];\n\n  // Extract FedEx Freight PRO numbers (10-12 digit standalone numbers)\n  const allNumbers = desc.match(/\\b\\d{10,12}\\b/g) || [];\n  const fedexNumbers = allNumbers.filter(n => !n.startsWith('1Z'));\n\n  // Determine which numbers to use based on carrier\n  let trackingNumbers = [];\n  if (carrier.toLowerCase().includes('ups')) {\n    trackingNumbers = upsNumbers.map(n => ({ number: n, carrier: 'UPS' }));\n  } else if (carrier.toLowerCase().includes('fedex')) {\n    trackingNumbers = fedexNumbers.map(n => ({ number: n, carrier: 'FedEx Freight' }));\n  } else {\n    // fallback: grab whatever is there\n    trackingNumbers = [\n      ...upsNumbers.map(n => ({ number: n, carrier: 'UPS' })),\n      ...fedexNumbers.map(n => ({ number: n, carrier: 'FedEx Freight' }))\n    ];\n  }\n\n  // Extract last known status from description\n  // We write it as \"--- Last Status: In Transit ---\" when we update\n  const lastStatusMatch = desc.match(/--- Last Status: ([^-\\n]+) ---/);\n  const lastStatus = lastStatusMatch ? lastStatusMatch[1].trim() : null;\n\n  for (const tracking of trackingNumbers) {\n    const trackingUrl = tracking.carrier === 'UPS'\n      ? `https://www.ups.com/track?tracknum=${tracking.number}`\n      : `https://www.fedexfreight.com/en-us/tracking?trackingNumber=${tracking.number}`;\n\n    output.push({\n      json: {\n        taskId,\n        taskName,\n        customerName,\n        productDescription,\n        invoiceNumber,\n        orderDate,\n        carrier: tracking.carrier,\n        trackingNumber: tracking.number,\n        trackingUrl,\n        lastStatus,\n        fullDescription: desc\n      }\n    });\n  }\n}\n\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3168,
+        800
+      ],
+      "id": "9f5e7d91-e4f3-426f-bc2a-78c3f87c36e4",
+      "name": "Extract Task Data and Tracking Numbers"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst html = item.data || item.body || '';\nconst carrier = item.carrier;\n\nlet status = 'Unknown';\nlet delivered = false;\n\nconst h = html.toLowerCase();\n\nif (carrier === 'UPS') {\n  if (h.includes('delivered')) {\n    status = 'Delivered';\n    delivered = true;\n  } else if (h.includes('out for delivery')) {\n    status = 'Out for Delivery';\n  } else if (h.includes('on the way') || h.includes('in transit')) {\n    status = 'In Transit';\n  } else if (h.includes('departed')) {\n    status = 'In Transit - Departed Facility';\n  } else if (h.includes('arrived')) {\n    status = 'In Transit - Arrived at Facility';\n  } else if (h.includes('picked up') || h.includes('pickup')) {\n    status = 'Picked Up';\n  } else if (h.includes('label created') || h.includes('shipment information')) {\n    status = 'Label Created';\n  } else if (h.includes('exception') || h.includes('delay')) {\n    status = 'Delay / Exception';\n  }\n} else {\n  // FedEx Freight\n  if (h.includes('delivered')) {\n    status = 'Delivered';\n    delivered = true;\n  } else if (h.includes('out for delivery') || h.includes('on fedex vehicle')) {\n    status = 'Out for Delivery';\n  } else if (h.includes('in transit') || h.includes('in-transit')) {\n    status = 'In Transit';\n  } else if (h.includes('at local') || h.includes('at destination')) {\n    status = 'At Local Facility';\n  } else if (h.includes('picked up')) {\n    status = 'Picked Up';\n  } else if (h.includes('shipment information sent') || h.includes('label created')) {\n    status = 'Label Created';\n  } else if (h.includes('exception') || h.includes('delay')) {\n    status = 'Delay / Exception';\n  }\n}\n\nconst now = new Date().toLocaleString('en-US', {\n  timeZone: 'America/New_York',\n  month: '2-digit',\n  day: '2-digit',\n  year: 'numeric',\n  hour: '2-digit',\n  minute: '2-digit',\n  hour12: true\n});\n\nconst statusChanged = item.lastStatus !== status;\nconst isFirstSeen = !item.lastStatus;\n\nreturn [{\n  json: {\n    ...item,\n    currentStatus: status,\n    delivered,\n    statusChanged,\n    isFirstSeen,\n    checkedAt: now\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2736,
+        800
+      ],
+      "id": "5c940d98-0e1b-45aa-bf87-088d133e4749",
+      "name": "Parse Status from Page"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-changed",
+              "leftValue": "={{ $json.statusChanged }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2512,
+        800
+      ],
+      "id": "86e0148d-a0c6-4b8a-bf1e-1ed3902839db",
+      "name": "Did Status Change?"
+    },
+    {
+      "parameters": {
+        "authentication": "[REDACTED]",
+        "operation": "update",
+        "updateFields": {
+          "content": "={{ $json.orderDate }}\n\n{{ $json.customerName }} - {{ $json.invoiceNumber }}\n\n{{ $json.productDescription }}\n{{ $json.carrier }}\n\n{{ $json.trackingNumber }}\n\n{{ $json.trackingUrl }}\n\n--- Last Status: {{ $json.currentStatus }} ---\n--- Last Checked: {{ $json.checkedAt }} ---"
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -2288,
+        688
+      ],
+      "id": "7f18d691-a1d0-47ea-94f3-cbe32446bbee",
+      "name": "Update Task Description with Status",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "YdeLZd1F8SMW0vfX",
+          "name": "SnL ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "dynamackops@gmail.com",
+        "subject": "={{ $json.delivered ? '✅ DELIVERED' : ($json.currentStatus === 'Delay / Exception' ? '⚠️ DELAY ALERT' : '📦 Shipment Update') }}: {{ $json.customerName }} — {{ $json.currentStatus }}",
+        "message": "=<div style=\"font-family: sans-serif; max-width: 580px; margin: 0 auto; padding: 24px; color: #1a1a1a;\">\n\n  <div style=\"border-left: 4px solid {{ $json.delivered ? '#2d6a4f' : ($json.currentStatus === 'Delay / Exception' ? '#b5451b' : '#1a1a2e') }}; padding-left: 16px; margin-bottom: 24px;\">\n    <h2 style=\"margin: 0 0 4px 0; font-size: 20px;\">{{ $json.delivered ? '✅ Delivered' : ($json.currentStatus === 'Delay / Exception' ? '⚠️ Delay / Exception' : '📦 Shipment Update') }}</h2>\n    <p style=\"margin: 0; color: #555; font-size: 14px;\">Checked {{ $json.checkedAt }} ET</p>\n  </div>\n\n  <table style=\"width: 100%; border-collapse: collapse; font-size: 14px;\">\n    <tr style=\"border-bottom: 1px solid #eee;\">\n      <td style=\"padding: 10px 0; color: #666; width: 150px;\">Customer</td>\n      <td style=\"padding: 10px 0; font-weight: 600;\">{{ $json.customerName }}</td>\n    </tr>\n    <tr style=\"border-bottom: 1px solid #eee; background: #fafafa;\">\n      <td style=\"padding: 10px; color: #666;\">Invoice</td>\n      <td style=\"padding: 10px; font-weight: 600;\">{{ $json.invoiceNumber }}</td>\n    </tr>\n    <tr style=\"border-bottom: 1px solid #eee;\">\n      <td style=\"padding: 10px 0; color: #666;\">Product</td>\n      <td style=\"padding: 10px 0;\">{{ $json.productDescription }}</td>\n    </tr>\n    <tr style=\"border-bottom: 1px solid #eee; background: #fafafa;\">\n      <td style=\"padding: 10px; color: #666;\">Order Date</td>\n      <td style=\"padding: 10px;\">{{ $json.orderDate }}</td>\n    </tr>\n    <tr style=\"border-bottom: 1px solid #eee;\">\n      <td style=\"padding: 10px 0; color: #666;\">Carrier</td>\n      <td style=\"padding: 10px 0;\">{{ $json.carrier }}</td>\n    </tr>\n    <tr style=\"border-bottom: 1px solid #eee; background: #fafafa;\">\n      <td style=\"padding: 10px; color: #666;\">Tracking #</td>\n      <td style=\"padding: 10px; font-family: monospace;\">{{ $json.trackingNumber }}</td>\n    </tr>\n    <tr style=\"border-bottom: 1px solid #eee;\">\n      <td style=\"padding: 10px 0; color: #666;\">Previous Status</td>\n      <td style=\"padding: 10px 0; color: #888;\">{{ $json.lastStatus || 'First scan' }}</td>\n    </tr>\n    <tr style=\"background: #fafafa;\">\n      <td style=\"padding: 10px; color: #666;\">Current Status</td>\n      <td style=\"padding: 10px; font-weight: 700; font-size: 15px; color: {{ $json.delivered ? '#2d6a4f' : ($json.currentStatus === 'Delay / Exception' ? '#b5451b' : '#1a1a2e') }};\">{{ $json.currentStatus }}</td>\n    </tr>\n  </table>\n\n  <div style=\"margin-top: 20px;\">\n    <a href=\"{{ $json.trackingUrl }}\" style=\"display: inline-block; background: #1a1a2e; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 14px;\">🔗 View Tracking</a>\n  </div>\n\n  {{ $json.delivered ? '<div style=\"margin-top: 20px; padding: 14px; background: #d4edda; border-radius: 6px; color: #155724; font-size: 14px;\"><strong>✅ Delivered</strong> — A follow-up confirmation task has been created in your L2 Global To-Do list.</div>' : '' }}\n  {{ $json.currentStatus === 'Delay / Exception' ? '<div style=\"margin-top: 20px; padding: 14px; background: #fdecea; border-radius: 6px; color: #b5451b; font-size: 14px;\"><strong>⚠️ Action may be needed.</strong> Check the tracking link above for details.</div>' : '' }}\n\n</div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -2080,
+        688
+      ],
+      "id": "6b69c533-cab3-44d9-b558-33ff2fb3fcee",
+      "name": "Email Status Update",
+      "webhookId": "344ed69f-7305-4c22-ae74-309e113098d9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XVr5TpHD19VfVgmt",
+          "name": "dynamack gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "[REDACTED]",
+        "team": "90141110503",
+        "space": "90144976312",
+        "folderless": true,
+        "list": "[REDACTED]",
+        "name": "=✅ Confirm Receipt: {{ $json.customerName }} — {{ $json.invoiceNumber }}",
+        "additionalFields": {
+          "assignees": [
+            94467076
+          ],
+          "content": "=Shipment has been marked DELIVERED. Please confirm receipt with the customer and update accordingly.\n\n------------------------------\nOrder Date: {{ $json.orderDate }}\nCustomer: {{ $json.customerName }}\nInvoice: {{ $json.invoiceNumber }}\nProduct: {{ $json.productDescription }}\nCarrier: {{ $json.carrier }}\nTracking #: {{ $json.trackingNumber }}\nStatus: {{ $json.currentStatus }}\nDelivery Confirmed: {{ $json.checkedAt }}\n------------------------------\n\nTracking Link: {{ $json.trackingUrl }}\n\n☑ Action Items:\n- Confirm receipt with customer\n- Verify item condition on arrival\n- Update invoice/payment status in Zoho if needed\n- Close original tracking task in L2 Tracking",
+          "dueDate": "={{ Date.now() + 86400000 }}",
+          "priority": 2,
+          "tags": [
+            "follow-up",
+            "delivered"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -1632,
+        576
+      ],
+      "id": "4261604a-dead-4621-948f-0cbc31875955",
+      "name": "Create Follow-Up Task in To-Do",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "YdeLZd1F8SMW0vfX",
+          "name": "SnL ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "[REDACTED]",
+        "operation": "update",
+        "updateFields": {
+          "status": "complete"
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -1408,
+        576
+      ],
+      "id": "76863d09-759e-4b2c-96b1-60805fdcfbf9",
+      "name": "Mark Tracking Task Complete",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "YdeLZd1F8SMW0vfX",
+          "name": "SnL ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://app.scrapingbee.com/api/v1/?api_key[REDACTED]&url={{ encodeURIComponent($json.trackingUrl) }}&render_js=false",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2960,
+        800
+      ],
+      "id": "b5ed55ff-7a09-4c7e-8bac-920a0e0c726b",
+      "name": "Fetch Tracking Page1",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-delivered",
+              "leftValue": "={{ $json.delivered }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1856,
+        688
+      ],
+      "id": "127bb161-573b-49ab-ba13-abb2e48fdc15",
+      "name": "Is Delivered?1"
+    }
+  ],
+  "connections": {
+    "10am and 3pm ET Mon-Fri": {
+      "main": [
+        [
+          {
+            "node": "Get Jasmine Tracking Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Jasmine Tracking Tasks": {
+      "main": [
+        [
+          {
+            "node": "Extract Task Data and Tracking Numbers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Task Data and Tracking Numbers": {
+      "main": [
+        [
+          {
+            "node": "Fetch Tracking Page1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Status from Page": {
+      "main": [
+        [
+          {
+            "node": "Did Status Change?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Did Status Change?": {
+      "main": [
+        [
+          {
+            "node": "Update Task Description with Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Task Description with Status": {
+      "main": [
+        [
+          {
+            "node": "Email Status Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Status Update": {
+      "main": [
+        [
+          {
+            "node": "Is Delivered?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Follow-Up Task in To-Do": {
+      "main": [
+        [
+          {
+            "node": "Mark Tracking Task Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Tracking Page1": {
+      "main": [
+        [
+          {
+            "node": "Parse Status from Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Delivered?1": {
+      "main": [
+        [
+          {
+            "node": "Create Follow-Up Task in To-Do",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "dc348303-6195-4681-a9e3-521d871304d2",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-06-02T20:49:09.976Z",
+      "createdAt": "2026-06-02T20:49:09.976Z",
+      "role": "workflow:owner",
+      "workflowId": "Jd51gGlN7Atxr3B4",
+      "projectId": "849yyMdpMvSsDroi"
+    }
+  ],
+  "activeVersion": null
+}
