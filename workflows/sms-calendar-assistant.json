@@ -1,50 +1,59 @@
 {
-  "updatedAt": "2026-08-16T00:20:52.000Z",
-  "createdAt": "2026-08-15T17:40:29.171Z",
-  "id": "hfOcXLYkP1dASVOT",
+  "updatedAt": "2026-08-15T17:40:40.000Z",
+  "createdAt": "2026-08-15T17:08:25.095Z",
+  "id": "gkrkGGGvItAwXTE3",
   "name": "SMS Calendar Assistant",
   "active": false,
   "isArchived": true,
   "nodes": [
     {
-      "parameters": {
-        "content": "## SMS Calendar Assistant\nTriggered by an incoming text to your Twilio number.\nReply \"tomorrow\" -> texts back tomorrow's agenda across all 3 accounts.\nReply \"week\" -> texts back the next 7 days across all 3 accounts.\nReply \"add: <event>\" -> parses it and creates a Google Calendar event on your Dynamack calendar, then confirms by text.\nAnything else -> gets a help text.",
-        "height": 200,
-        "width": 300
-      },
-      "id": "a6ee06e9-698c-4798-bff8-82058b9eaef6",
-      "name": "Sticky Note 28bf01ce",
+      "id": "c0a47433-326f-4f77-a3cc-072f8277feeb",
+      "name": "Sticky Note df15af1c",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -48,
-        -48
-      ]
+        -50,
+        -50
+      ],
+      "parameters": {
+        "content": "## SMS Calendar Assistant\nTriggered by an incoming text to your Twilio number.\nReply \"tomorrow\" -> texts back tomorrow's agenda.\nReply \"week\" -> texts back the next 7 days.\nReply \"add: <event>\" -> Claude/Anthropic parses it and creates a Google Calendar event, then confirms by text.\nAnything else -> gets a help text.\nWhen you reconnect your second Google Calendar, add it to the Tomorrow/Week/Create Event branches too.",
+        "width": 300,
+        "height": 200
+      }
     },
     {
-      "parameters": {
-        "updates": [
-          "com.twilio.messaging.inbound-message.received"
-        ]
-      },
-      "id": "55201b26-4414-4829-ad5c-263424cb9269",
+      "id": "09544e18-e784-45ff-896b-d15917fda0eb",
       "name": "SMS Received",
       "type": "n8n-nodes-base.twilioTrigger",
       "typeVersion": 1,
       "position": [
         0,
-        880
+        496
       ],
-      "webhookId": "24db6e26-81e9-49dd-a537-75b645f3d92d",
+      "parameters": {
+        "updates": [
+          "com.twilio.messaging.inbound-message.received"
+        ]
+      },
       "credentials": {
         "twilioApi": {
-          "id": "DV7EVriUcHY3sVGv",
-          "name": "dynamack twilio"
+          "id": "B6mjmo6XEXe8dtNd",
+          "name": "Twilio account"
         }
-      }
+      },
+      "webhookId": "c8f04b9d-eb8e-4db8-8fd6-8fdddbec0801"
     },
     {
+      "id": "8dadc5d4-4718-493f-b137-497da172dff8",
+      "name": "Route By Message",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        464
+      ],
       "parameters": {
+        "mode": "rules",
         "rules": {
           "values": [
             {
@@ -52,8 +61,7 @@
                 "options": {
                   "caseSensitive": false,
                   "leftValue": "",
-                  "typeValidation": "loose",
-                  "version": 1
+                  "typeValidation": "loose"
                 },
                 "conditions": [
                   {
@@ -75,8 +83,7 @@
                 "options": {
                   "caseSensitive": false,
                   "leftValue": "",
-                  "typeValidation": "loose",
-                  "version": 1
+                  "typeValidation": "loose"
                 },
                 "conditions": [
                   {
@@ -98,8 +105,7 @@
                 "options": {
                   "caseSensitive": false,
                   "leftValue": "",
-                  "typeValidation": "loose",
-                  "version": 1
+                  "typeValidation": "loose"
                 },
                 "conditions": [
                   {
@@ -122,28 +128,31 @@
           "fallbackOutput": "extra",
           "renameFallbackOutput": "Help"
         }
-      },
-      "id": "0d182917-8149-4f92-88fb-5485ed6d18f5",
-      "name": "Route By Message",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3.4,
-      "position": [
-        224,
-        848
-      ]
+      }
     },
     {
+      "id": "6b438028-0a51-44f3-bd93-f1966e7bd50d",
+      "name": "Extract Event Details",
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        0
+      ],
       "parameters": {
         "text": "={{ $json.Body }}",
+        "schemaType": "fromAttributes",
         "attributes": {
           "attributes": [
             {
               "name": "summary",
+              "type": "string",
               "description": "The event title, stripped of any leading \"add\" or \"add:\" instruction",
               "required": true
             },
             {
               "name": "start",
+              "type": "string",
               "description": "Event start date/time in ISO 8601 (YYYY-MM-DDTHH:mm:ss) if a time is given, or YYYY-MM-DD if only a date is given. Assume year 2026 if no year is stated. Today is 2026-08-15.",
               "required": true
             },
@@ -154,29 +163,11 @@
               "required": true
             }
           ]
-        },
-        "options": {}
-      },
-      "id": "e88309d7-69c1-458b-b435-1e2ce12d645e",
-      "name": "Extract Event Details",
-      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
-      "typeVersion": 1.2,
-      "position": [
-        448,
-        0
-      ]
+        }
+      }
     },
     {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "mode": "list",
-          "value": "claude-sonnet-4-6",
-          "cachedResultName": "Claude Sonnet 4.6"
-        },
-        "options": {}
-      },
-      "id": "fbcb031b-b1f8-49cc-9fbd-efc0d650ed46",
+      "id": "a3f7bfcc-e8da-4587-9168-83d42f26d123",
       "name": "Anthropic Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
       "typeVersion": 1.5,
@@ -184,6 +175,14 @@
         528,
         224
       ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-6",
+          "cachedResultName": "Claude Sonnet 4.6"
+        }
+      },
       "credentials": {
         "anthropicApi": {
           "id": "XSQard4t45CA22na",
@@ -192,33 +191,22 @@
       }
     },
     {
-      "parameters": {
-        "jsCode": "const extracted = $input.first().json.output || $input.first().json;\nconst allDay = !!extracted.allDay;\nconst summary = extracted.summary || 'New event';\nlet start = extracted.start;\nlet end;\n\nif (allDay) {\n  const startDate = new Date(start + 'T00:00:00');\n  const endDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000);\n  end = endDate.toISOString().slice(0, 10);\n} else {\n  const startDate = new Date(start);\n  const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);\n  start = startDate.toISOString();\n  end = endDate.toISOString();\n}\n\nconst to = $('SMS Received').first().json.From;\nreturn [{ json: { summary, start, end, allDay, to } }];"
-      },
-      "id": "1c1489a3-72e6-4f3b-b107-a869b0d9012a",
+      "id": "f103ae57-8766-4e38-bae1-dda76ba548a1",
       "name": "Prepare Event For Calendar",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
         800,
         112
-      ]
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const extracted = $input.first().json.output || $input.first().json;\nconst allDay = !!extracted.allDay;\nconst summary = extracted.summary || 'New event';\nlet start = extracted.start;\nlet end;\n\nif (allDay) {\n  // Google Calendar all-day events: end date is exclusive, so add 1 day\n  const startDate = new Date(start + 'T00:00:00');\n  const endDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000);\n  end = endDate.toISOString().slice(0, 10);\n} else {\n  const startDate = new Date(start);\n  const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);\n  start = startDate.toISOString();\n  end = endDate.toISOString();\n}\n\nconst to = $('SMS Received').first().json.From;\nreturn [{ json: { summary, start, end, allDay, to } }];"
+      }
     },
     {
-      "parameters": {
-        "calendar": {
-          "__rl": true,
-          "mode": "id",
-          "value": "dynamackops@gmail.com"
-        },
-        "start": "={{ $json.start }}",
-        "end": "={{ $json.end }}",
-        "additionalFields": {
-          "allday": "={{ $json.allDay ? \"yes\" : \"no\" }}",
-          "summary": "={{ $json.summary }}"
-        }
-      },
-      "id": "fa0dc172-f356-4be8-abc3-54a3175e229f",
+      "id": "52b0db2b-c737-4d56-8275-5ade60161fc2",
       "name": "Create Calendar Event",
       "type": "n8n-nodes-base.googleCalendar",
       "typeVersion": 1.3,
@@ -226,34 +214,47 @@
         1024,
         112
       ],
+      "parameters": {
+        "resource": "event",
+        "operation": "create",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "dynamackops@gmail.com",
+          "cachedResultName": "dynamackops@gmail.com"
+        },
+        "start": "={{ $json.start }}",
+        "end": "={{ $json.end }}",
+        "useDefaultReminders": true,
+        "additionalFields": {
+          "summary": "={{ $json.summary }}",
+          "allday": "={{ $json.allDay ? \"yes\" : \"no\" }}"
+        }
+      },
       "credentials": {
         "googleCalendarOAuth2Api": {
           "id": "7JZndbNGNly999DM",
-          "name": "Dynamack"
+          "name": "Google Calendar account"
         }
       }
     },
     {
-      "parameters": {
-        "jsCode": "const created = $input.first().json;\nconst to = $('Prepare Event For Calendar').first().json.to;\nconst message = 'Added to your calendar: ' + (created.summary || 'your event');\nreturn [{ json: { message, to } }];"
-      },
-      "id": "f87b730f-57e2-4ccc-aed5-4506bb3bd1e3",
+      "id": "f99b3fac-38ae-4e12-b073-c8c4ad0b3850",
       "name": "Format Add Confirmation",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
         1248,
         112
-      ]
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const created = $input.first().json;\nconst to = $('Prepare Event For Calendar').first().json.to;\nconst message = 'Added to your calendar: ' + (created.summary || 'your event');\nreturn [{ json: { message, to } }];"
+      }
     },
     {
-      "parameters": {
-        "from": "+17372583742",
-        "to": "={{ $json.to }}",
-        "message": "={{ $json.message }}",
-        "options": {}
-      },
-      "id": "0c2c4f6f-bd62-425a-b599-b0a87a2b057a",
+      "id": "8aa341bb-e983-4f16-86e4-fd2ca294d0d3",
       "name": "Send Add Confirmation",
       "type": "n8n-nodes-base.twilio",
       "typeVersion": 1,
@@ -261,399 +262,197 @@
         1472,
         112
       ],
+      "parameters": {
+        "resource": "sms",
+        "operation": "send",
+        "from": "+17372583742",
+        "to": "={{ $json.to }}",
+        "message": "={{ $json.message }}"
+      },
       "credentials": {
         "twilioApi": {
-          "id": "DV7EVriUcHY3sVGv",
-          "name": "dynamack twilio"
+          "id": "B6mjmo6XEXe8dtNd",
+          "name": "Twilio account"
         }
       }
     },
     {
-      "parameters": {
-        "jsCode": "return [\"dynamackops@gmail.com\", \"en.usa#holiday@group.v.calendar.google.com\"].map(id => ({ json: { calendarId: id } }));"
-      },
-      "id": "5e5f9048-1e84-4492-98a6-a1b7bfdfe94c",
-      "name": "Dynamack Calendars - Tomorrow",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
+      "id": "c1300dd7-b3d9-4c71-b396-dca9ce3fb6d2",
+      "name": "Get Tomorrow - Main",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
       "position": [
         512,
         400
-      ]
-    },
-    {
+      ],
       "parameters": {
+        "resource": "event",
         "operation": "getAll",
         "calendar": {
           "__rl": true,
-          "mode": "id",
-          "value": "={{ $json.calendarId }}"
+          "mode": "list",
+          "value": "dynamackops@gmail.com",
+          "cachedResultName": "dynamackops@gmail.com"
         },
         "returnAll": true,
         "timeMin": "={{ $today.plus(1, \"days\").toISO() }}",
         "timeMax": "={{ $today.plus(2, \"days\").toISO() }}",
         "options": {
+          "singleEvents": true,
           "orderBy": "startTime"
         }
       },
-      "id": "4cf679d8-ad39-484b-b1f6-04c495d876b5",
-      "name": "Get Events - Dynamack Tomorrow",
-      "type": "n8n-nodes-base.googleCalendar",
-      "typeVersion": 1.3,
-      "position": [
-        800,
-        400
-      ],
       "credentials": {
         "googleCalendarOAuth2Api": {
           "id": "7JZndbNGNly999DM",
-          "name": "Dynamack"
+          "name": "Google Calendar account"
         }
       }
     },
     {
-      "parameters": {
-        "numberInputs": 3
-      },
-      "id": "c132fd69-acad-4903-865e-0e7a0293d751",
-      "name": "Combine Calendars - Tomorrow",
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3.2,
-      "position": [
-        1024,
-        576
-      ]
-    },
-    {
-      "parameters": {
-        "jsCode": "return [\"dynamackops@gmail.com\", \"en.usa#holiday@group.v.calendar.google.com\"].map(id => ({ json: { calendarId: id } }));"
-      },
-      "id": "c69d17a7-c8bf-4c40-8623-a4f1986bda93",
-      "name": "Dynamack Calendars - Week",
+      "id": "ecd2b9cd-a030-4456-aadb-05a4b2cddd67",
+      "name": "Format Tomorrow Text",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        512,
-        976
-      ]
+        800,
+        400
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const items = $input.all();\nconst tz = 'America/New_York';\nconst events = items.map(i => i.json).filter(e => e && (e.summary || e.start));\n\nevents.sort((a, b) => {\n  const aStart = (a.start && (a.start.dateTime || a.start.date)) || '';\n  const bStart = (b.start && (b.start.dateTime || b.start.date)) || '';\n  return aStart.localeCompare(bStart);\n});\n\nconst lines = [];\nif (events.length === 0) {\n  lines.push('Nothing on the calendar tomorrow.');\n} else {\n  for (const e of events) {\n    let timeStr;\n    if (e.start && e.start.dateTime) {\n      const dt = new Date(e.start.dateTime);\n      timeStr = dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: tz });\n    } else {\n      timeStr = 'All day';\n    }\n    lines.push(timeStr + ' - ' + (e.summary || '(no title)'));\n  }\n}\n\nconst message = 'Tomorrow:\\n\\n' + lines.join('\\n');\nconst to = $('SMS Received').first().json.From;\nreturn [{ json: { message, to } }];"
+      }
     },
     {
+      "id": "2ac05aad-2240-4d6e-9060-74b448ff9777",
+      "name": "Send Tomorrow Text",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        400
+      ],
       "parameters": {
+        "resource": "sms",
+        "operation": "send",
+        "from": "+17372583742",
+        "to": "={{ $json.to }}",
+        "message": "={{ $json.message }}"
+      },
+      "credentials": {
+        "twilioApi": {
+          "id": "B6mjmo6XEXe8dtNd",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "id": "929da00e-675d-4ea8-a94c-416ce68e7238",
+      "name": "Get Week - Main",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        512,
+        592
+      ],
+      "parameters": {
+        "resource": "event",
         "operation": "getAll",
         "calendar": {
           "__rl": true,
-          "mode": "id",
-          "value": "={{ $json.calendarId }}"
+          "mode": "list",
+          "value": "dynamackops@gmail.com",
+          "cachedResultName": "dynamackops@gmail.com"
         },
         "returnAll": true,
         "timeMin": "={{ $today.toISO() }}",
         "timeMax": "={{ $today.plus(7, \"days\").toISO() }}",
         "options": {
+          "singleEvents": true,
           "orderBy": "startTime"
         }
       },
-      "id": "8e8982df-5628-4b17-9174-f04b61e6d4e1",
-      "name": "Get Events - Dynamack Week",
-      "type": "n8n-nodes-base.googleCalendar",
-      "typeVersion": 1.3,
-      "position": [
-        800,
-        976
-      ],
       "credentials": {
         "googleCalendarOAuth2Api": {
           "id": "7JZndbNGNly999DM",
-          "name": "Dynamack"
+          "name": "Google Calendar account"
         }
       }
     },
     {
-      "parameters": {
-        "numberInputs": 3
-      },
-      "id": "4b4d5505-8bef-4b0e-add1-f9ee400314b6",
-      "name": "Combine Calendars - Week",
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3.2,
+      "id": "e589346a-82d3-4ac0-b89a-9b53799b617d",
+      "name": "Format Week Text",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
-        1024,
-        1152
-      ]
+        800,
+        592
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const items = $input.all();\nconst tz = 'America/New_York';\nconst events = items.map(i => i.json).filter(e => e && (e.summary || e.start));\n\nevents.sort((a, b) => {\n  const aStart = (a.start && (a.start.dateTime || a.start.date)) || '';\n  const bStart = (b.start && (b.start.dateTime || b.start.date)) || '';\n  return aStart.localeCompare(bStart);\n});\n\nconst lines = [];\nif (events.length === 0) {\n  lines.push('Nothing on the calendar this week.');\n} else {\n  for (const e of events) {\n    const start = e.start && (e.start.dateTime || e.start.date);\n    const dt = new Date(start);\n    let label;\n    if (e.start && e.start.dateTime) {\n      label = dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: tz }) +\n        ' ' + dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: tz });\n    } else {\n      label = dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: tz }) + ' (all day)';\n    }\n    lines.push(label + ' - ' + (e.summary || '(no title)'));\n  }\n}\n\nconst message = 'This week:\\n\\n' + lines.join('\\n');\nconst to = $('SMS Received').first().json.From;\nreturn [{ json: { message, to } }];"
+      }
     },
     {
+      "id": "df8f0524-d691-46d9-b40f-e70a72d3a3be",
+      "name": "Send Week Text",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        592
+      ],
       "parameters": {
-        "jsCode": "const to = $('SMS Received').first().json.From;\nconst message = 'Text \"tomorrow\" or \"week\" for your agenda, or \"add: <event and date>\" to add something to your calendar.';\nreturn [{ json: { message, to } }];"
+        "resource": "sms",
+        "operation": "send",
+        "from": "+17372583742",
+        "to": "={{ $json.to }}",
+        "message": "={{ $json.message }}"
       },
-      "id": "0b916fa8-674c-4b40-bbbc-7768984f1219",
+      "credentials": {
+        "twilioApi": {
+          "id": "B6mjmo6XEXe8dtNd",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "id": "49e54200-5476-47ad-bc91-ccd9377d746a",
       "name": "Format Help Text",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
         512,
-        1552
-      ]
+        784
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const to = $('SMS Received').first().json.From;\nconst message = 'Text \"tomorrow\" or \"week\" for your agenda, or \"add: <event and date>\" to add something to your calendar.';\nreturn [{ json: { message, to } }];"
+      }
     },
     {
-      "parameters": {
-        "from": "+17372583742",
-        "to": "={{ $json.to }}",
-        "message": "={{ $json.message }}",
-        "options": {}
-      },
-      "id": "2b3e3656-b837-44dd-bc54-6e423d244b67",
+      "id": "aa3675c0-c30e-4303-824e-42797157e4ab",
       "name": "Send Help Text",
       "type": "n8n-nodes-base.twilio",
       "typeVersion": 1,
       "position": [
         800,
-        1552
-      ],
-      "credentials": {
-        "twilioApi": {
-          "id": "DV7EVriUcHY3sVGv",
-          "name": "dynamack twilio"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "return [\"jasminegm100@gmail.com\"].map(id => ({ json: { calendarId: id } }));"
-      },
-      "id": "2834d59e-8a5b-40fd-adca-28a0712a826e",
-      "name": "Personal Calendars - Tomorrow",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        512,
-        592
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "getAll",
-        "calendar": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{ $json.calendarId }}"
-        },
-        "returnAll": true,
-        "timeMin": "={{ $today.plus(1, \"days\").toISO() }}",
-        "timeMax": "={{ $today.plus(2, \"days\").toISO() }}",
-        "options": {
-          "orderBy": "startTime"
-        }
-      },
-      "id": "8c3a509b-a68d-4d28-baa9-72d80719b984",
-      "name": "Get Events - Personal Tomorrow",
-      "type": "n8n-nodes-base.googleCalendar",
-      "typeVersion": 1.3,
-      "position": [
-        800,
-        592
-      ],
-      "credentials": {
-        "googleCalendarOAuth2Api": {
-          "id": "EY2FNlGWepYg0rBi",
-          "name": "Personal"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "return [\"jasmine@reioptimize.com\", \"c_a6997a80cc476ea56ea7133241d42b9d0d4881f823582588c20dc38697c0d82a@group.calendar.google.com\"].map(id => ({ json: { calendarId: id } }));"
-      },
-      "id": "bc67a4ff-6d27-4744-9c0c-15003a659666",
-      "name": "TUB Calendars - Tomorrow",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        512,
-        784
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "getAll",
-        "calendar": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{ $json.calendarId }}"
-        },
-        "returnAll": true,
-        "timeMin": "={{ $today.plus(1, \"days\").toISO() }}",
-        "timeMax": "={{ $today.plus(2, \"days\").toISO() }}",
-        "options": {
-          "orderBy": "startTime"
-        }
-      },
-      "id": "74e03617-893c-40b9-b597-ec6aa543a49a",
-      "name": "Get Events - TUB Tomorrow",
-      "type": "n8n-nodes-base.googleCalendar",
-      "typeVersion": 1.3,
-      "position": [
-        800,
         784
       ],
-      "credentials": {
-        "googleCalendarOAuth2Api": {
-          "id": "qBA2Gl1lQPqZsacL",
-          "name": "TUB work"
-        }
-      }
-    },
-    {
       "parameters": {
-        "jsCode": "return [\"jasminegm100@gmail.com\"].map(id => ({ json: { calendarId: id } }));"
-      },
-      "id": "da349deb-52a0-4258-8bbc-65162f1b134f",
-      "name": "Personal Calendars - Week",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        512,
-        1168
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "getAll",
-        "calendar": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{ $json.calendarId }}"
-        },
-        "returnAll": true,
-        "timeMin": "={{ $today.toISO() }}",
-        "timeMax": "={{ $today.plus(7, \"days\").toISO() }}",
-        "options": {
-          "orderBy": "startTime"
-        }
-      },
-      "id": "9606c8a2-53d9-4545-9811-d514133b9ca0",
-      "name": "Get Events - Personal Week",
-      "type": "n8n-nodes-base.googleCalendar",
-      "typeVersion": 1.3,
-      "position": [
-        800,
-        1168
-      ],
-      "credentials": {
-        "googleCalendarOAuth2Api": {
-          "id": "EY2FNlGWepYg0rBi",
-          "name": "Personal"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "return [\"jasmine@reioptimize.com\", \"c_a6997a80cc476ea56ea7133241d42b9d0d4881f823582588c20dc38697c0d82a@group.calendar.google.com\"].map(id => ({ json: { calendarId: id } }));"
-      },
-      "id": "b8e6d1d4-c56e-41d2-b4c6-63d6f36abd45",
-      "name": "TUB Calendars - Week",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        512,
-        1360
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "getAll",
-        "calendar": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{ $json.calendarId }}"
-        },
-        "returnAll": true,
-        "timeMin": "={{ $today.toISO() }}",
-        "timeMax": "={{ $today.plus(7, \"days\").toISO() }}",
-        "options": {
-          "orderBy": "startTime"
-        }
-      },
-      "id": "3023c621-1f25-4e7e-958a-9a23f338ee7d",
-      "name": "Get Events - TUB Week",
-      "type": "n8n-nodes-base.googleCalendar",
-      "typeVersion": 1.3,
-      "position": [
-        800,
-        1360
-      ],
-      "credentials": {
-        "googleCalendarOAuth2Api": {
-          "id": "qBA2Gl1lQPqZsacL",
-          "name": "TUB work"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nconst tz = 'America/New_York';\nconst events = items.map(i => i.json).filter(e => e && (e.summary || e.start));\n\nevents.sort((a, b) => {\n  const aStart = (a.start && (a.start.dateTime || a.start.date)) || '';\n  const bStart = (b.start && (b.start.dateTime || b.start.date)) || '';\n  return aStart.localeCompare(bStart);\n});\n\nconst lines = [];\nif (events.length === 0) {\n  lines.push('Nothing on the calendar tomorrow.');\n} else {\n  for (const e of events) {\n    let timeStr;\n    if (e.start && e.start.dateTime) {\n      const dt = new Date(e.start.dateTime);\n      timeStr = dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: tz });\n    } else {\n      timeStr = 'All day';\n    }\n    lines.push(timeStr + ' - ' + (e.summary || '(no title)'));\n  }\n}\n\nconst message = 'Tomorrow:\\n\\n' + lines.join('\\n');\nconst to = $('SMS Received').first().json.From;\nreturn [{ json: { message, to } }];"
-      },
-      "id": "24baf0ec-c829-49e3-bd1f-d6e341444bd7",
-      "name": "Format Tomorrow Text",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1248,
-        592
-      ]
-    },
-    {
-      "parameters": {
+        "resource": "sms",
+        "operation": "send",
         "from": "+17372583742",
         "to": "={{ $json.to }}",
-        "message": "={{ $json.message }}",
-        "options": {}
+        "message": "={{ $json.message }}"
       },
-      "id": "5f7ecc0a-656c-4aa6-b9e6-fafa28297f25",
-      "name": "Send Tomorrow Text",
-      "type": "n8n-nodes-base.twilio",
-      "typeVersion": 1,
-      "position": [
-        1472,
-        592
-      ],
       "credentials": {
         "twilioApi": {
-          "id": "DV7EVriUcHY3sVGv",
-          "name": "dynamack twilio"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "const items = $input.all();\nconst tz = 'America/New_York';\nconst events = items.map(i => i.json).filter(e => e && (e.summary || e.start));\n\nevents.sort((a, b) => {\n  const aStart = (a.start && (a.start.dateTime || a.start.date)) || '';\n  const bStart = (b.start && (b.start.dateTime || b.start.date)) || '';\n  return aStart.localeCompare(bStart);\n});\n\nconst lines = [];\nif (events.length === 0) {\n  lines.push('Nothing on the calendar this week.');\n} else {\n  for (const e of events) {\n    const start = e.start && (e.start.dateTime || e.start.date);\n    const dt = new Date(start);\n    let label;\n    if (e.start && e.start.dateTime) {\n      label = dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: tz }) +\n        ' ' + dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: tz });\n    } else {\n      label = dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: tz }) + ' (all day)';\n    }\n    lines.push(label + ' - ' + (e.summary || '(no title)'));\n  }\n}\n\nconst message = 'This week:\\n\\n' + lines.join('\\n');\nconst to = $('SMS Received').first().json.From;\nreturn [{ json: { message, to } }];"
-      },
-      "id": "56af5b76-6d89-4f85-aae6-b68e1f38bdd6",
-      "name": "Format Week Text",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1248,
-        1168
-      ]
-    },
-    {
-      "parameters": {
-        "from": "+17372583742",
-        "to": "={{ $json.to }}",
-        "message": "={{ $json.message }}",
-        "options": {}
-      },
-      "id": "baeb8a3a-f3f9-4263-b3ac-3e108b7a7c87",
-      "name": "Send Week Text",
-      "type": "n8n-nodes-base.twilio",
-      "typeVersion": 1,
-      "position": [
-        1472,
-        1168
-      ],
-      "credentials": {
-        "twilioApi": {
-          "id": "DV7EVriUcHY3sVGv",
-          "name": "dynamack twilio"
+          "id": "B6mjmo6XEXe8dtNd",
+          "name": "Twilio account"
         }
       }
     }
@@ -681,34 +480,14 @@
         ],
         [
           {
-            "node": "Dynamack Calendars - Tomorrow",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Personal Calendars - Tomorrow",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "TUB Calendars - Tomorrow",
+            "node": "Get Tomorrow - Main",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Dynamack Calendars - Week",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Personal Calendars - Week",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "TUB Calendars - Week",
+            "node": "Get Week - Main",
             "type": "main",
             "index": 0
           }
@@ -777,29 +556,7 @@
         ]
       ]
     },
-    "Dynamack Calendars - Tomorrow": {
-      "main": [
-        [
-          {
-            "node": "Get Events - Dynamack Tomorrow",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get Events - Dynamack Tomorrow": {
-      "main": [
-        [
-          {
-            "node": "Combine Calendars - Tomorrow",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Combine Calendars - Tomorrow": {
+    "Get Tomorrow - Main": {
       "main": [
         [
           {
@@ -810,143 +567,22 @@
         ]
       ]
     },
-    "Dynamack Calendars - Week": {
-      "main": [
-        [
-          {
-            "node": "Get Events - Dynamack Week",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get Events - Dynamack Week": {
-      "main": [
-        [
-          {
-            "node": "Combine Calendars - Week",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Combine Calendars - Week": {
-      "main": [
-        [
-          {
-            "node": "Format Week Text",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Format Help Text": {
-      "main": [
-        [
-          {
-            "node": "Send Help Text",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Personal Calendars - Tomorrow": {
-      "main": [
-        [
-          {
-            "node": "Get Events - Personal Tomorrow",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get Events - Personal Tomorrow": {
-      "main": [
-        [
-          {
-            "node": "Combine Calendars - Tomorrow",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "TUB Calendars - Tomorrow": {
-      "main": [
-        [
-          {
-            "node": "Get Events - TUB Tomorrow",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get Events - TUB Tomorrow": {
-      "main": [
-        [
-          {
-            "node": "Combine Calendars - Tomorrow",
-            "type": "main",
-            "index": 2
-          }
-        ]
-      ]
-    },
-    "Personal Calendars - Week": {
-      "main": [
-        [
-          {
-            "node": "Get Events - Personal Week",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get Events - Personal Week": {
-      "main": [
-        [
-          {
-            "node": "Combine Calendars - Week",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "TUB Calendars - Week": {
-      "main": [
-        [
-          {
-            "node": "Get Events - TUB Week",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get Events - TUB Week": {
-      "main": [
-        [
-          {
-            "node": "Combine Calendars - Week",
-            "type": "main",
-            "index": 2
-          }
-        ]
-      ]
-    },
     "Format Tomorrow Text": {
       "main": [
         [
           {
             "node": "Send Tomorrow Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Week - Main": {
+      "main": [
+        [
+          {
+            "node": "Format Week Text",
             "type": "main",
             "index": 0
           }
@@ -963,12 +599,22 @@
           }
         ]
       ]
+    },
+    "Format Help Text": {
+      "main": [
+        [
+          {
+            "node": "Send Help Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "executionOrder": "v1",
-    "availableInMCP": true,
-    "binaryMode": "separate"
+    "availableInMCP": true
   },
   "staticData": {
     "node:SMS Received": {
@@ -981,17 +627,17 @@
     "builderVariant": "mcp"
   },
   "nodeGroups": [],
-  "pinData": {},
-  "versionId": "8eb5fa02-0644-4750-8c3d-0a83f9a184f0",
+  "pinData": null,
+  "versionId": "b2ca77ac-c7c0-4f8d-bd82-fc245f80c642",
   "activeVersionId": null,
   "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-08-15T17:40:29.173Z",
-      "createdAt": "2026-08-15T17:40:29.173Z",
+      "updatedAt": "2026-08-15T17:08:25.097Z",
+      "createdAt": "2026-08-15T17:08:25.097Z",
       "role": "workflow:owner",
-      "workflowId": "hfOcXLYkP1dASVOT",
+      "workflowId": "gkrkGGGvItAwXTE3",
       "projectId": "849yyMdpMvSsDroi"
     }
   ],
