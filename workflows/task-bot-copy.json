@@ -1,8 +1,8 @@
 {
-  "updatedAt": "2026-08-23T14:11:53.000Z",
-  "createdAt": "2026-04-17T00:36:29.134Z",
-  "id": "n1C84tZv4yomtnTW",
-  "name": "Task Bot copy",
+  "updatedAt": "2026-08-23T14:09:20.000Z",
+  "createdAt": "2026-03-24T14:37:02.685Z",
+  "id": "fMelXm3Z6o5xbwTg",
+  "name": "Task Bot COPY",
   "active": false,
   "isArchived": true,
   "nodes": [
@@ -28,9 +28,8 @@
         0,
         0
       ],
-      "id": "31dd31e2-ea40-4381-b68a-d7fba7f2b470",
-      "name": "Schedule Trigger",
-      "disabled": true
+      "id": "91e485cf-947e-41f8-9b0d-c6638c7664e5",
+      "name": "Schedule Trigger"
     },
     {
       "parameters": {
@@ -57,14 +56,9 @@
         208,
         0
       ],
-      "id": "0badf6bb-f0bb-473c-8f49-a3dc620243c9",
+      "id": "d6bdc9a8-5f40-4ffe-a742-3d2b80474d75",
       "name": "Get row(s) in sheet",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "IUmAthp1ArAwTVDK",
-          "name": "Google Sheets account 3"
-        }
-      }
+      "credentials": {}
     },
     {
       "parameters": {
@@ -76,7 +70,7 @@
         608,
         0
       ],
-      "id": "3e98fe2b-7ecf-40c0-9467-88630b8d4039",
+      "id": "bee6c4bc-56a9-45bc-bd42-763cb03a212c",
       "name": "Summarization Chain"
     },
     {
@@ -90,14 +84,9 @@
         624,
         160
       ],
-      "id": "6d77f8b0-c260-49a8-a4d8-20e8c4019f6d",
+      "id": "5d5ccff4-d521-4ab5-a256-75b3adeddf43",
       "name": "Ollama API",
-      "credentials": {
-        "groqApi": {
-          "id": "Fmrh94NweehK4Zx9",
-          "name": "Groq account"
-        }
-      }
+      "credentials": {}
     },
     {
       "parameters": {
@@ -105,7 +94,7 @@
         "subject": "TASK UPDATE",
         "message": "=You haven't gotten to this yet and it is {{ $('Schedule Trigger').item.json['Readable date'] }}\n\nHere is your update:\n{{ $json.output.text }}\n\n\n\n\n",
         "options": {},
-        "path": "74ef4d0f-d422-4e72-9ee3-db24a4a27964"
+        "path": "77624826-7553-4b02-a87d-ec76545181cd"
       },
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
@@ -113,15 +102,10 @@
         976,
         0
       ],
-      "id": "1fa90339-3399-4303-9a4f-53e27d9597d5",
+      "id": "fd727319-23a6-4027-9b19-662c14e66ef2",
       "name": "Send a message",
-      "webhookId": "74ef4d0f-d422-4e72-9ee3-db24a4a27964",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "XVr5TpHD19VfVgmt",
-          "name": "Gmail account 3"
-        }
-      }
+      "webhookId": "77624826-7553-4b02-a87d-ec76545181cd",
+      "credentials": {}
     },
     {
       "parameters": {
@@ -134,7 +118,7 @@
         416,
         0
       ],
-      "id": "32737de5-53db-4190-a320-bfe0915e8c85",
+      "id": "57b68349-667a-4f2d-a23f-99ddf23c9133",
       "name": "Aggregate"
     },
     {
@@ -148,7 +132,7 @@
         528,
         352
       ],
-      "id": "d74e3c07-2306-426a-a622-b567e9ad508d",
+      "id": "e3d778e1-9d1d-4ca1-ad62-f1e493db698d",
       "name": "Split Out"
     },
     {
@@ -321,14 +305,9 @@
         736,
         352
       ],
-      "id": "3edf69cd-7afd-4ae8-8791-888d24d89f4d",
+      "id": "ed208921-cfcd-4474-b16f-1352d37533fd",
       "name": "Update row in sheet",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "IUmAthp1ArAwTVDK",
-          "name": "Google Sheets account 3"
-        }
-      }
+      "credentials": {}
     }
   ],
   "connections": {
@@ -424,17 +403,17 @@
   },
   "nodeGroups": [],
   "pinData": {},
-  "versionId": "821cc294-f7ee-4942-a0c9-f445d34ec33d",
+  "versionId": "05bd3264-a53b-49a6-80b1-b56d082d20ff",
   "activeVersionId": null,
   "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-04-17T00:36:52.946Z",
-      "createdAt": "2026-04-17T00:36:52.946Z",
+      "updatedAt": "2026-03-24T14:37:02.687Z",
+      "createdAt": "2026-03-24T14:37:02.687Z",
       "role": "workflow:owner",
-      "workflowId": "n1C84tZv4yomtnTW",
-      "projectId": "19c8hZxcT7dM3j2n"
+      "workflowId": "fMelXm3Z6o5xbwTg",
+      "projectId": "849yyMdpMvSsDroi"
     }
   ],
   "activeVersion": null
