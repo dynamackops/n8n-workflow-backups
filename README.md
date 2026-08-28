@@ -2,7 +2,7 @@
 
 This repo is automatically updated every Friday at 5 PM ET with a JSON export of every workflow in this n8n instance. Each workflow lives in `workflows/<name>.json`.
 
-Last synced: 2026-08-26T05:52:00.112-04:00
+Last synced: 2026-08-28T17:01:23.668-04:00
 
 Total workflows: 47
 
