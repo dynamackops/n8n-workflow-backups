@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:09:32.000Z",
-  "createdAt": "2026-06-10T15:36:34.168Z",
   "id": "FTfB9I5KrG0bKTYc",
   "name": "Jasmine's Jarvis copy",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-06-10T15:36:34.168Z",
+  "updatedAt": "2026-08-23T14:09:32.000Z",
   "isArchived": true,
+  "versionId": "4b02537f-4732-4f1c-a52c-2177099984b8",
+  "triggerCount": 0,
   "nodes": [
     {
       "parameters": {
@@ -357,28 +360,25 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false
   },
   "staticData": null,
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "4b02537f-4732-4f1c-a52c-2177099984b8",
-  "activeVersionId": null,
-  "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-06-10T15:36:34.171Z",
-      "createdAt": "2026-06-10T15:36:34.171Z",
       "role": "workflow:owner",
       "workflowId": "FTfB9I5KrG0bKTYc",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-06-10T15:36:34.171Z",
+      "updatedAt": "2026-06-10T15:36:34.171Z"
     }
   ],
   "activeVersion": null
