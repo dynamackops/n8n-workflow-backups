@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-25T00:16:35.000Z",
-  "createdAt": "2026-08-16T00:20:41.261Z",
   "id": "1epNIygY8gKtGVz9",
   "name": "Email Calendar Assistant",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-08-16T00:20:41.261Z",
+  "updatedAt": "2026-08-25T00:16:35.000Z",
   "isArchived": true,
+  "versionId": "35894374-d3e9-4938-9a94-f58498a103d5",
+  "triggerCount": 1,
   "nodes": [
     {
       "parameters": {
@@ -1021,6 +1024,7 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": true,
@@ -1038,23 +1042,19 @@
       }
     }
   },
+  "pinData": {},
   "meta": {
     "aiBuilderAssisted": true,
     "builderVariant": "mcp"
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "35894374-d3e9-4938-9a94-f58498a103d5",
-  "activeVersionId": null,
-  "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-08-16T00:20:41.263Z",
-      "createdAt": "2026-08-16T00:20:41.263Z",
       "role": "workflow:owner",
       "workflowId": "1epNIygY8gKtGVz9",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-08-16T00:20:41.263Z",
+      "updatedAt": "2026-08-16T00:20:41.263Z"
     }
   ],
   "activeVersion": null
