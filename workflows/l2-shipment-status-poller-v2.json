@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:09:23.000Z",
-  "createdAt": "2026-06-02T20:49:09.973Z",
   "id": "Jd51gGlN7Atxr3B4",
   "name": "L2 Shipment Status Poller v2",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-06-02T20:49:09.973Z",
+  "updatedAt": "2026-08-23T14:09:23.000Z",
   "isArchived": true,
+  "versionId": "dc348303-6195-4681-a9e3-521d871304d2",
+  "triggerCount": 0,
   "nodes": [
     {
       "parameters": {
@@ -387,27 +390,24 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
   "staticData": null,
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "dc348303-6195-4681-a9e3-521d871304d2",
-  "activeVersionId": null,
-  "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-06-02T20:49:09.976Z",
-      "createdAt": "2026-06-02T20:49:09.976Z",
       "role": "workflow:owner",
       "workflowId": "Jd51gGlN7Atxr3B4",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-06-02T20:49:09.976Z",
+      "updatedAt": "2026-06-02T20:49:09.976Z"
     }
   ],
   "activeVersion": null
