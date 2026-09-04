@@ -1,33 +1,33 @@
 {
-  "updatedAt": "2026-08-23T14:08:59.000Z",
-  "createdAt": "2026-03-30T19:45:56.050Z",
   "id": "FCDBpCU3lYd8YXi4",
   "name": "Medical Courier Delivery Conf Flow",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-03-30T19:45:56.050Z",
+  "updatedAt": "2026-08-23T14:08:59.000Z",
   "isArchived": true,
+  "versionId": "3284c0d1-0337-4f14-985e-edb6c0175c7c",
+  "triggerCount": 0,
   "nodes": [],
   "connections": {},
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
   "staticData": null,
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "3284c0d1-0337-4f14-985e-edb6c0175c7c",
-  "activeVersionId": null,
-  "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-03-30T19:45:56.053Z",
-      "createdAt": "2026-03-30T19:45:56.053Z",
       "role": "workflow:owner",
       "workflowId": "FCDBpCU3lYd8YXi4",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-03-30T19:45:56.053Z",
+      "updatedAt": "2026-03-30T19:45:56.053Z"
     }
   ],
   "activeVersion": null
