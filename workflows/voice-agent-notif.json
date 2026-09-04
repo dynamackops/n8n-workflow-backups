@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:08:45.000Z",
-  "createdAt": "2026-03-05T22:45:56.427Z",
   "id": "3tJRaAb5XW1jgN6L",
   "name": "Voice Agent Notif",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-03-05T22:45:56.427Z",
+  "updatedAt": "2026-08-23T14:08:45.000Z",
   "isArchived": true,
+  "versionId": "76237ccd-1a59-4de8-9614-fdab5b8c72fa",
+  "triggerCount": 0,
   "nodes": [
     {
       "parameters": {
@@ -211,28 +214,25 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false
   },
   "staticData": null,
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "76237ccd-1a59-4de8-9614-fdab5b8c72fa",
-  "activeVersionId": null,
-  "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-03-05T22:45:56.429Z",
-      "createdAt": "2026-03-05T22:45:56.429Z",
       "role": "workflow:owner",
       "workflowId": "3tJRaAb5XW1jgN6L",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-03-05T22:45:56.429Z",
+      "updatedAt": "2026-03-05T22:45:56.429Z"
     }
   ],
   "activeVersion": null
