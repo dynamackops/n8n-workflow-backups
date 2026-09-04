@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:30:41.418Z",
-  "createdAt": "2026-03-10T15:59:00.661Z",
   "id": "4yFnIPKz2xebeeyi",
   "name": "Glennell Mack",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-03-10T15:59:00.661Z",
+  "updatedAt": "2026-08-23T14:30:41.418Z",
   "isArchived": false,
+  "versionId": "5520818f-a3cc-4a5d-b122-270501232629",
+  "triggerCount": 0,
   "nodes": [
     {
       "parameters": {
@@ -174,28 +177,25 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": true
   },
   "staticData": null,
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "5520818f-a3cc-4a5d-b122-270501232629",
-  "activeVersionId": null,
-  "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-03-10T15:59:00.662Z",
-      "createdAt": "2026-03-10T15:59:00.662Z",
       "role": "workflow:owner",
       "workflowId": "4yFnIPKz2xebeeyi",
-      "projectId": "19c8hZxcT7dM3j2n"
+      "projectId": "19c8hZxcT7dM3j2n",
+      "createdAt": "2026-03-10T15:59:00.662Z",
+      "updatedAt": "2026-03-10T15:59:00.662Z"
     }
   ],
   "activeVersion": null
