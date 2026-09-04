@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:18:31.000Z",
-  "createdAt": "2026-07-09T19:16:15.620Z",
   "id": "HCTSfGa2vvN2L3KO",
   "name": "Signl Cycle — Checkin Embedding Pipeline",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-07-09T19:16:15.620Z",
+  "updatedAt": "2026-08-23T14:18:31.000Z",
   "isArchived": false,
+  "versionId": "48c1220d-5bdb-4b2d-b06e-66a7b8d8132e",
+  "triggerCount": 0,
   "nodes": [
     {
       "parameters": {
@@ -173,29 +176,26 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": true,
     "binaryMode": "separate"
   },
   "staticData": null,
+  "pinData": {},
   "meta": {
     "aiBuilderAssisted": true,
     "builderVariant": "mcp"
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "48c1220d-5bdb-4b2d-b06e-66a7b8d8132e",
-  "activeVersionId": null,
-  "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-08-23T14:18:31.504Z",
-      "createdAt": "2026-08-23T14:18:31.504Z",
       "role": "workflow:owner",
       "workflowId": "HCTSfGa2vvN2L3KO",
-      "projectId": "19c8hZxcT7dM3j2n"
+      "projectId": "19c8hZxcT7dM3j2n",
+      "createdAt": "2026-08-23T14:18:31.504Z",
+      "updatedAt": "2026-08-23T14:18:31.504Z"
     }
   ],
   "activeVersion": null
