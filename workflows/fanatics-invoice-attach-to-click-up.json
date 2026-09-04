@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:09:16.000Z",
-  "createdAt": "2026-05-14T16:42:09.035Z",
   "id": "JDXV4I1hT7rQc8Uc",
   "name": "Fanatics Invoice attach to Click Up",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-05-14T16:42:09.035Z",
+  "updatedAt": "2026-08-23T14:09:16.000Z",
   "isArchived": true,
+  "versionId": "0ec2e1f0-3003-4078-a00f-464debb063ea",
+  "triggerCount": 0,
   "nodes": [
     {
       "parameters": {
@@ -141,26 +144,23 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "availableInMCP": false,
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
   "staticData": null,
-  "meta": null,
-  "nodeGroups": [],
   "pinData": {},
-  "versionId": "0ec2e1f0-3003-4078-a00f-464debb063ea",
-  "activeVersionId": null,
-  "triggerCount": 0,
+  "meta": null,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-05-14T16:42:09.038Z",
-      "createdAt": "2026-05-14T16:42:09.038Z",
       "role": "workflow:owner",
       "workflowId": "JDXV4I1hT7rQc8Uc",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-05-14T16:42:09.038Z",
+      "updatedAt": "2026-05-14T16:42:09.038Z"
     }
   ],
   "activeVersion": null
