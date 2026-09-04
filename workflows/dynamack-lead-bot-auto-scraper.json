@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-25T00:17:24.290Z",
-  "createdAt": "2026-06-24T19:52:35.265Z",
   "id": "LDj5KFKd01nOnPow",
   "name": "Dynamack Lead Bot — Auto Scraper",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-06-24T19:52:35.265Z",
+  "updatedAt": "2026-08-25T00:17:24.290Z",
   "isArchived": false,
+  "versionId": "62db83ca-fd41-4b85-ba7b-c98b37fdcdca",
+  "triggerCount": 1,
   "nodes": [
     {
       "parameters": {
@@ -550,6 +553,7 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
@@ -565,24 +569,20 @@
       ]
     }
   },
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true,
     "aiBuilderAssisted": true,
     "builderVariant": "mcp"
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "62db83ca-fd41-4b85-ba7b-c98b37fdcdca",
-  "activeVersionId": null,
-  "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-08-23T14:14:17.570Z",
-      "createdAt": "2026-08-23T14:14:17.570Z",
       "role": "workflow:owner",
       "workflowId": "LDj5KFKd01nOnPow",
-      "projectId": "19c8hZxcT7dM3j2n"
+      "projectId": "19c8hZxcT7dM3j2n",
+      "createdAt": "2026-08-23T14:14:17.570Z",
+      "updatedAt": "2026-08-23T14:14:17.570Z"
     }
   ],
   "activeVersion": null
