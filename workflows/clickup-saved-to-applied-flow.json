@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:13:41.000Z",
-  "createdAt": "2026-04-24T03:55:00.086Z",
   "id": "9MHotAOOM5Rwt5Wm",
   "name": "Clickup - Saved to Applied Flow",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-04-24T03:55:00.086Z",
+  "updatedAt": "2026-08-23T14:13:41.000Z",
   "isArchived": true,
+  "versionId": "af322e39-f62a-4447-b7b9-9aa4cbf35cc0",
+  "triggerCount": 1,
   "nodes": [
     {
       "parameters": {
@@ -133,6 +136,7 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
@@ -146,22 +150,18 @@
       "lastRevisionLink": "https://docs.google.com/spreadsheets/export?[REDACTED]&revision=39&exportFormat=xlsx"
     }
   },
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "af322e39-f62a-4447-b7b9-9aa4cbf35cc0",
-  "activeVersionId": null,
-  "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-04-24T03:55:00.087Z",
-      "createdAt": "2026-04-24T03:55:00.087Z",
       "role": "workflow:owner",
       "workflowId": "9MHotAOOM5Rwt5Wm",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-04-24T03:55:00.087Z",
+      "updatedAt": "2026-04-24T03:55:00.087Z"
     }
   ],
   "activeVersion": null
