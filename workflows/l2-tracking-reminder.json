@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:09:53.000Z",
-  "createdAt": "2026-07-21T15:15:35.267Z",
   "id": "KAIqRgZG4pyFid7N",
   "name": "L2 Tracking Reminder",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-07-21T15:15:35.267Z",
+  "updatedAt": "2026-08-23T14:09:53.000Z",
   "isArchived": true,
+  "versionId": "5b6c321b-a118-4ff8-8989-223c325c5e8c",
+  "triggerCount": 0,
   "nodes": [
     {
       "parameters": {
@@ -68,28 +71,25 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false
   },
   "staticData": null,
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "5b6c321b-a118-4ff8-8989-223c325c5e8c",
-  "activeVersionId": null,
-  "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-07-21T15:15:35.270Z",
-      "createdAt": "2026-07-21T15:15:35.270Z",
       "role": "workflow:owner",
       "workflowId": "KAIqRgZG4pyFid7N",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-07-21T15:15:35.270Z",
+      "updatedAt": "2026-07-21T15:15:35.270Z"
     }
   ],
   "activeVersion": null
