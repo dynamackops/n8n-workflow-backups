@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:08:48.000Z",
-  "createdAt": "2026-03-30T19:42:29.818Z",
   "id": "XorNeE6XkALYHY96",
   "name": "Medical Courier-Job -> Driver flow",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-03-30T19:42:29.818Z",
+  "updatedAt": "2026-08-23T14:08:48.000Z",
   "isArchived": true,
+  "versionId": "296a2bac-eb60-4552-bdf7-16fe06308bc1",
+  "triggerCount": 0,
   "nodes": [
     {
       "parameters": {
@@ -107,27 +110,24 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
   "staticData": null,
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "296a2bac-eb60-4552-bdf7-16fe06308bc1",
-  "activeVersionId": null,
-  "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-03-30T19:42:29.820Z",
-      "createdAt": "2026-03-30T19:42:29.820Z",
       "role": "workflow:owner",
       "workflowId": "XorNeE6XkALYHY96",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-03-30T19:42:29.820Z",
+      "updatedAt": "2026-03-30T19:42:29.820Z"
     }
   ],
   "activeVersion": null
