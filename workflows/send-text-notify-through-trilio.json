@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-03-05T19:36:00.000Z",
-  "createdAt": "2026-01-13T19:59:25.100Z",
   "id": "u20U3fq94OF_htGeAUTI-",
   "name": "Send text notify through Trilio",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-01-13T19:59:25.100Z",
+  "updatedAt": "2026-03-05T19:36:00.000Z",
   "isArchived": true,
+  "versionId": "75fe311b-4f78-445f-a625-9086b0b5c9ac",
+  "triggerCount": 0,
   "nodes": [
     {
       "parameters": {},
@@ -183,27 +186,24 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": false
   },
   "staticData": null,
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "75fe311b-4f78-445f-a625-9086b0b5c9ac",
-  "activeVersionId": null,
-  "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-01-13T19:59:25.103Z",
-      "createdAt": "2026-01-13T19:59:25.103Z",
       "role": "workflow:owner",
       "workflowId": "u20U3fq94OF_htGeAUTI-",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-01-13T19:59:25.103Z",
+      "updatedAt": "2026-01-13T19:59:25.103Z"
     }
   ],
   "activeVersion": null
