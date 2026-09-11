@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:09:45.000Z",
-  "createdAt": "2026-06-22T22:08:29.644Z",
   "id": "OgttJDOG5ThUO5Bk",
   "name": "Click Open Tasks",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-06-22T22:08:29.644Z",
+  "updatedAt": "2026-08-23T14:09:45.000Z",
   "isArchived": true,
+  "versionId": "5193767d-d022-46c4-b2b6-f9abc4d66ef3",
+  "triggerCount": 0,
   "nodes": [
     {
       "parameters": {
@@ -96,28 +99,25 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false
   },
   "staticData": null,
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "5193767d-d022-46c4-b2b6-f9abc4d66ef3",
-  "activeVersionId": null,
-  "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-06-22T22:08:29.651Z",
-      "createdAt": "2026-06-22T22:08:29.651Z",
       "role": "workflow:owner",
       "workflowId": "OgttJDOG5ThUO5Bk",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-06-22T22:08:29.651Z",
+      "updatedAt": "2026-06-22T22:08:29.651Z"
     }
   ],
   "activeVersion": null
