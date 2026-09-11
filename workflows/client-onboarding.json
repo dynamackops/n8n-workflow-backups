@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-03-05T22:45:19.000Z",
-  "createdAt": "2026-03-05T19:36:17.052Z",
   "id": "bZt2O6qxMzVKkNMX",
   "name": "Client Onboarding",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-03-05T19:36:17.052Z",
+  "updatedAt": "2026-03-05T22:45:19.000Z",
   "isArchived": true,
+  "versionId": "0fb8be4e-984e-4691-b8f1-63602b04eb9b",
+  "triggerCount": 1,
   "nodes": [
     {
       "parameters": {
@@ -203,28 +206,25 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false
   },
   "staticData": null,
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "0fb8be4e-984e-4691-b8f1-63602b04eb9b",
-  "activeVersionId": null,
-  "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-03-05T19:36:17.056Z",
-      "createdAt": "2026-03-05T19:36:17.056Z",
       "role": "workflow:owner",
       "workflowId": "bZt2O6qxMzVKkNMX",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-03-05T19:36:17.056Z",
+      "updatedAt": "2026-03-05T19:36:17.056Z"
     }
   ],
   "activeVersion": null
