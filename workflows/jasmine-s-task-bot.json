@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:08:53.000Z",
-  "createdAt": "2026-03-23T18:24:45.659Z",
   "id": "muhh6weDEqAzpxuo",
   "name": "Jasmine's Task Bot",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-03-23T18:24:45.659Z",
+  "updatedAt": "2026-08-23T14:08:53.000Z",
   "isArchived": true,
+  "versionId": "59dad74b-ce88-4302-a56d-87eb61bf50b0",
+  "triggerCount": 1,
   "nodes": [
     {
       "parameters": {
@@ -408,6 +411,7 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
@@ -418,22 +422,18 @@
       "recurrenceRules": []
     }
   },
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "59dad74b-ce88-4302-a56d-87eb61bf50b0",
-  "activeVersionId": null,
-  "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-03-23T18:24:45.660Z",
-      "createdAt": "2026-03-23T18:24:45.660Z",
       "role": "workflow:owner",
       "workflowId": "muhh6weDEqAzpxuo",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-03-23T18:24:45.660Z",
+      "updatedAt": "2026-03-23T18:24:45.660Z"
     }
   ],
   "activeVersion": null
