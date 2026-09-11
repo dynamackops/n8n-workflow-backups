@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:30:47.631Z",
-  "createdAt": "2026-04-11T02:50:14.305Z",
   "id": "TReYNkcDfpA7D2tK",
   "name": "Daily Job Search Digest MARISSA MACK",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-04-11T02:50:14.305Z",
+  "updatedAt": "2026-08-23T14:30:47.631Z",
   "isArchived": false,
+  "versionId": "642e0b09-928d-49d9-8e12-3378209eb40f",
+  "triggerCount": 1,
   "nodes": [
     {
       "parameters": {
@@ -497,6 +500,7 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
@@ -509,22 +513,18 @@
       "recurrenceRules": []
     }
   },
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "642e0b09-928d-49d9-8e12-3378209eb40f",
-  "activeVersionId": null,
-  "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-04-11T02:50:14.307Z",
-      "createdAt": "2026-04-11T02:50:14.307Z",
       "role": "workflow:owner",
       "workflowId": "TReYNkcDfpA7D2tK",
-      "projectId": "19c8hZxcT7dM3j2n"
+      "projectId": "19c8hZxcT7dM3j2n",
+      "createdAt": "2026-04-11T02:50:14.307Z",
+      "updatedAt": "2026-04-11T02:50:14.307Z"
     }
   ],
   "activeVersion": null
