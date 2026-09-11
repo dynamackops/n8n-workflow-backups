@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:10:45.000Z",
-  "createdAt": "2026-08-13T16:36:38.319Z",
   "id": "dJIo5lhI8QFpRVBK",
   "name": "Notion to ClickUp TUB Task Sync",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-08-13T16:36:38.319Z",
+  "updatedAt": "2026-08-23T14:10:45.000Z",
   "isArchived": true,
+  "versionId": "63fc3a51-66fc-4783-9930-5ce11ef2809a",
+  "triggerCount": 0,
   "nodes": [
     {
       "parameters": {
@@ -216,29 +219,26 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": true,
     "binaryMode": "separate"
   },
   "staticData": null,
+  "pinData": {},
   "meta": {
     "aiBuilderAssisted": true,
     "builderVariant": "mcp"
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "63fc3a51-66fc-4783-9930-5ce11ef2809a",
-  "activeVersionId": null,
-  "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-08-13T16:36:38.346Z",
-      "createdAt": "2026-08-13T16:36:38.346Z",
       "role": "workflow:owner",
       "workflowId": "dJIo5lhI8QFpRVBK",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-08-13T16:36:38.346Z",
+      "updatedAt": "2026-08-13T16:36:38.346Z"
     }
   ],
   "activeVersion": null
