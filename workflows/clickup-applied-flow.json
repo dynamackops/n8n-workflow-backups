@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:13:23.000Z",
-  "createdAt": "2026-04-24T00:19:22.053Z",
   "id": "fISR3TwTgxrExcnN",
   "name": "ClickUp -Applied Flow",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-04-24T00:19:22.053Z",
+  "updatedAt": "2026-08-23T14:13:23.000Z",
   "isArchived": true,
+  "versionId": "8004b34a-15ac-4ad8-91a8-93e03ac41f2f",
+  "triggerCount": 1,
   "nodes": [
     {
       "parameters": {
@@ -142,6 +145,7 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
@@ -154,22 +158,18 @@
       "lastIndexChecked": 5
     }
   },
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "8004b34a-15ac-4ad8-91a8-93e03ac41f2f",
-  "activeVersionId": null,
-  "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-04-24T00:19:22.056Z",
-      "createdAt": "2026-04-24T00:19:22.056Z",
       "role": "workflow:owner",
       "workflowId": "fISR3TwTgxrExcnN",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-04-24T00:19:22.056Z",
+      "updatedAt": "2026-04-24T00:19:22.056Z"
     }
   ],
   "activeVersion": null
