@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:09:03.000Z",
-  "createdAt": "2026-04-25T00:08:37.949Z",
   "id": "Utxqe19sEpx2doZP",
   "name": "My workflow 4",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-04-25T00:08:37.949Z",
+  "updatedAt": "2026-08-23T14:09:03.000Z",
   "isArchived": true,
+  "versionId": "c54b6550-2691-400c-a0bd-e41bc47e3c6d",
+  "triggerCount": 0,
   "nodes": [
     {
       "parameters": {
@@ -91,15 +94,12 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
   "staticData": null,
-  "meta": {
-    "templateCredsSetupCompleted": true
-  },
-  "nodeGroups": [],
   "pinData": {
     "Webhook": [
       {
@@ -116,17 +116,17 @@
       }
     ]
   },
-  "versionId": "c54b6550-2691-400c-a0bd-e41bc47e3c6d",
-  "activeVersionId": null,
-  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-04-25T00:08:37.952Z",
-      "createdAt": "2026-04-25T00:08:37.952Z",
       "role": "workflow:owner",
       "workflowId": "Utxqe19sEpx2doZP",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-04-25T00:08:37.952Z",
+      "updatedAt": "2026-04-25T00:08:37.952Z"
     }
   ],
   "activeVersion": null
