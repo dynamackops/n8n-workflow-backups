@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:09:10.000Z",
-  "createdAt": "2026-04-10T18:43:36.929Z",
   "id": "rJUNjlHWGZ7tfjl2",
   "name": "Daily Job Search Digest",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-04-10T18:43:36.929Z",
+  "updatedAt": "2026-08-23T14:09:10.000Z",
   "isArchived": true,
+  "versionId": "b07e875a-2fa9-47a4-8e4a-76035d3eb16c",
+  "triggerCount": 1,
   "nodes": [
     {
       "parameters": {
@@ -537,6 +540,7 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
@@ -549,10 +553,6 @@
       "recurrenceRules": []
     }
   },
-  "meta": {
-    "templateCredsSetupCompleted": true
-  },
-  "nodeGroups": [],
   "pinData": {
     "Schedule Trigger": [
       {
@@ -575,17 +575,17 @@
       }
     ]
   },
-  "versionId": "b07e875a-2fa9-47a4-8e4a-76035d3eb16c",
-  "activeVersionId": null,
-  "triggerCount": 1,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-04-10T18:43:36.931Z",
-      "createdAt": "2026-04-10T18:43:36.931Z",
       "role": "workflow:owner",
       "workflowId": "rJUNjlHWGZ7tfjl2",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-04-10T18:43:36.931Z",
+      "updatedAt": "2026-04-10T18:43:36.931Z"
     }
   ],
   "activeVersion": null
