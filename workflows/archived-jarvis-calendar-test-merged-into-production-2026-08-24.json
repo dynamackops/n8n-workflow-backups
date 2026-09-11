@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-25T00:26:11.129Z",
-  "createdAt": "2026-07-16T01:53:08.637Z",
   "id": "sJsKePXTYEi9pu4V",
   "name": "ARCHIVED — Jarvis Calendar Test (merged into production 2026-08-24)",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-07-16T01:53:08.637Z",
+  "updatedAt": "2026-08-25T00:26:11.129Z",
   "isArchived": false,
+  "versionId": "c2d8c411-3a80-4656-b391-8ad97fedafa1",
+  "triggerCount": 1,
   "nodes": [
     {
       "parameters": {
@@ -423,29 +426,26 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": true,
     "binaryMode": "separate"
   },
   "staticData": null,
+  "pinData": {},
   "meta": {
     "aiBuilderAssisted": true,
     "builderVariant": "mcp"
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "c2d8c411-3a80-4656-b391-8ad97fedafa1",
-  "activeVersionId": null,
-  "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-07-16T01:53:08.640Z",
-      "createdAt": "2026-07-16T01:53:08.640Z",
       "role": "workflow:owner",
       "workflowId": "sJsKePXTYEi9pu4V",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-07-16T01:53:08.640Z",
+      "updatedAt": "2026-07-16T01:53:08.640Z"
     }
   ],
   "activeVersion": null
