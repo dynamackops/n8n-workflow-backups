@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-03-05T19:36:02.000Z",
-  "createdAt": "2026-02-02T05:25:44.544Z",
   "id": "PX4Riv4U587zjSJrYR_Rf",
   "name": "My workflow 3",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-02-02T05:25:44.544Z",
+  "updatedAt": "2026-03-05T19:36:02.000Z",
   "isArchived": true,
+  "versionId": "6c170057-0814-4671-a330-74af7f3aae8a",
+  "triggerCount": 0,
   "nodes": [
     {
       "parameters": {
@@ -41,27 +44,24 @@
     }
   ],
   "connections": {},
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": false
   },
   "staticData": null,
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "6c170057-0814-4671-a330-74af7f3aae8a",
-  "activeVersionId": null,
-  "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-02-02T05:25:44.547Z",
-      "createdAt": "2026-02-02T05:25:44.547Z",
       "role": "workflow:owner",
       "workflowId": "PX4Riv4U587zjSJrYR_Rf",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-02-02T05:25:44.547Z",
+      "updatedAt": "2026-02-02T05:25:44.547Z"
     }
   ],
   "activeVersion": null
