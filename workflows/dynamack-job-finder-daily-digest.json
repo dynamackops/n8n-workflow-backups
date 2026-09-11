@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:15:03.000Z",
-  "createdAt": "2026-06-04T19:54:09.285Z",
   "id": "f0dSD19GlEvjU5sV",
   "name": "Dynamack Job Finder — Daily Digest",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-06-04T19:54:09.285Z",
+  "updatedAt": "2026-08-23T14:15:03.000Z",
   "isArchived": true,
+  "versionId": "15eab69e-e6b2-4e93-9c40-3e5e8b22a299",
+  "triggerCount": 1,
   "nodes": [
     {
       "parameters": {
@@ -340,6 +343,7 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
@@ -355,22 +359,18 @@
       ]
     }
   },
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "15eab69e-e6b2-4e93-9c40-3e5e8b22a299",
-  "activeVersionId": null,
-  "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-06-04T19:54:09.287Z",
-      "createdAt": "2026-06-04T19:54:09.287Z",
       "role": "workflow:owner",
       "workflowId": "f0dSD19GlEvjU5sV",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-06-04T19:54:09.287Z",
+      "updatedAt": "2026-06-04T19:54:09.287Z"
     }
   ],
   "activeVersion": null
