@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:11:21.000Z",
-  "createdAt": "2026-06-25T18:50:04.204Z",
   "id": "TNTovIoAxidRoKJ8",
   "name": "Dynamack × L2 Global — Social Lead Bot",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-06-25T18:50:04.204Z",
+  "updatedAt": "2026-08-23T14:11:21.000Z",
   "isArchived": true,
+  "versionId": "bd890b63-a7aa-4023-be2d-06d7c6346757",
+  "triggerCount": 0,
   "nodes": [
     {
       "parameters": {
@@ -621,28 +624,25 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false
   },
   "staticData": null,
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "bd890b63-a7aa-4023-be2d-06d7c6346757",
-  "activeVersionId": null,
-  "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-06-25T18:50:04.207Z",
-      "createdAt": "2026-06-25T18:50:04.207Z",
       "role": "workflow:owner",
       "workflowId": "TNTovIoAxidRoKJ8",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-06-25T18:50:04.207Z",
+      "updatedAt": "2026-06-25T18:50:04.207Z"
     }
   ],
   "activeVersion": null
