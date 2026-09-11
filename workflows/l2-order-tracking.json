@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:30:15.651Z",
-  "createdAt": "2026-04-30T19:16:01.060Z",
   "id": "lmgCJn8V3ZSq8TEc",
   "name": "L2 Order Tracking",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-04-30T19:16:01.060Z",
+  "updatedAt": "2026-08-23T14:30:15.651Z",
   "isArchived": false,
+  "versionId": "178a654c-0246-435f-b36d-7756c6412faa",
+  "triggerCount": 1,
   "nodes": [
     {
       "parameters": {
@@ -162,6 +165,7 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
@@ -178,22 +182,18 @@
       }
     }
   },
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "178a654c-0246-435f-b36d-7756c6412faa",
-  "activeVersionId": null,
-  "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-04-30T19:16:01.062Z",
-      "createdAt": "2026-04-30T19:16:01.062Z",
       "role": "workflow:owner",
       "workflowId": "lmgCJn8V3ZSq8TEc",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-04-30T19:16:01.062Z",
+      "updatedAt": "2026-04-30T19:16:01.062Z"
     }
   ],
   "activeVersion": null
