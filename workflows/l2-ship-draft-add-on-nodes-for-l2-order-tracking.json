@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:10:49.000Z",
-  "createdAt": "2026-05-18T20:18:06.198Z",
   "id": "dW8fe1LdJRZDDP8o",
   "name": "L2 Ship Draft — ADD-ON nodes for L2 Order Tracking",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-05-18T20:18:06.198Z",
+  "updatedAt": "2026-08-23T14:10:49.000Z",
   "isArchived": true,
+  "versionId": "0759c8c8-679e-4efb-9dfb-28d45363b947",
+  "triggerCount": 1,
   "nodes": [
     {
       "parameters": {
@@ -260,6 +263,7 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
@@ -276,20 +280,16 @@
       }
     }
   },
-  "meta": null,
-  "nodeGroups": [],
   "pinData": {},
-  "versionId": "0759c8c8-679e-4efb-9dfb-28d45363b947",
-  "activeVersionId": null,
-  "triggerCount": 1,
+  "meta": null,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-05-18T20:18:06.200Z",
-      "createdAt": "2026-05-18T20:18:06.200Z",
       "role": "workflow:owner",
       "workflowId": "dW8fe1LdJRZDDP8o",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-05-18T20:18:06.200Z",
+      "updatedAt": "2026-05-18T20:18:06.200Z"
     }
   ],
   "activeVersion": null
