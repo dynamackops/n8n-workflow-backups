@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-24T00:41:09.000Z",
-  "createdAt": "2026-08-23T23:59:44.771Z",
   "id": "NrOz1NONbXWEV673",
   "name": "Hard Rock Value Bets Digest",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-08-23T23:59:44.771Z",
+  "updatedAt": "2026-08-24T00:41:09.000Z",
   "isArchived": true,
+  "versionId": "5cc3c224-0d32-4e04-a57c-a503b6241c09",
+  "triggerCount": 1,
   "nodes": [
     {
       "parameters": {
@@ -200,6 +203,7 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": true,
@@ -219,23 +223,19 @@
       ]
     }
   },
+  "pinData": {},
   "meta": {
     "aiBuilderAssisted": true,
     "builderVariant": "mcp"
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "5cc3c224-0d32-4e04-a57c-a503b6241c09",
-  "activeVersionId": null,
-  "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-08-23T23:59:44.773Z",
-      "createdAt": "2026-08-23T23:59:44.773Z",
       "role": "workflow:owner",
       "workflowId": "NrOz1NONbXWEV673",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-08-23T23:59:44.773Z",
+      "updatedAt": "2026-08-23T23:59:44.773Z"
     }
   ],
   "activeVersion": null
