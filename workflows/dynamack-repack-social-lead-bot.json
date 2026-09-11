@@ -1,10 +1,13 @@
 {
-  "updatedAt": "2026-08-23T14:11:24.000Z",
-  "createdAt": "2026-06-25T18:50:19.250Z",
   "id": "jlVmJppL9BBJmRS5",
   "name": "Dynamack × Repack — Social Lead Bot",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-06-25T18:50:19.250Z",
+  "updatedAt": "2026-08-23T14:11:24.000Z",
   "isArchived": true,
+  "versionId": "9556d34f-8858-40b1-ba84-084c1835782f",
+  "triggerCount": 0,
   "nodes": [
     {
       "parameters": {
@@ -603,26 +606,23 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false
   },
   "staticData": null,
-  "meta": null,
-  "nodeGroups": [],
   "pinData": {},
-  "versionId": "9556d34f-8858-40b1-ba84-084c1835782f",
-  "activeVersionId": null,
-  "triggerCount": 0,
+  "meta": null,
   "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-06-25T18:50:19.251Z",
-      "createdAt": "2026-06-25T18:50:19.251Z",
       "role": "workflow:owner",
       "workflowId": "jlVmJppL9BBJmRS5",
-      "projectId": "849yyMdpMvSsDroi"
+      "projectId": "849yyMdpMvSsDroi",
+      "createdAt": "2026-06-25T18:50:19.251Z",
+      "updatedAt": "2026-06-25T18:50:19.251Z"
     }
   ],
   "activeVersion": null
