@@ -1,12 +1,12 @@
 {
-  "id": "NrOz1NONbXWEV673",
+  "id": "pPfTwZXc2nkBX2IG",
   "name": "Hard Rock Value Bets Digest",
   "active": false,
   "activeVersionId": null,
-  "createdAt": "2026-08-23T23:59:44.771Z",
-  "updatedAt": "2026-08-24T00:41:09.000Z",
-  "isArchived": true,
-  "versionId": "5cc3c224-0d32-4e04-a57c-a503b6241c09",
+  "createdAt": "2026-08-24T00:10:44.396Z",
+  "updatedAt": "2026-08-24T00:51:21.001Z",
+  "isArchived": false,
+  "versionId": "b4342c03-118c-4d3e-b6b3-9a8d4aa9a472",
   "triggerCount": 1,
   "nodes": [
     {
@@ -31,7 +31,7 @@
       "typeVersion": 1.3,
       "position": [
         0,
-        0
+        112
       ]
     },
     {
@@ -68,26 +68,18 @@
       "typeVersion": 4.5,
       "position": [
         224,
-        0
+        112
       ],
       "credentials": {
         "httpQueryAuth": {
           "id": "W4wDrO4qWqhCDj0o",
           "name": "HTTP Query Auth-Odds"
-        },
-        "httpCustomAuth": {
-          "id": "t29Wpl5irticQ4yr",
-          "name": "Custom Auth account"
-        },
-        "httpBearerAuth": {
-          "id": "EJHSR5tRaCCiakBn",
-          "name": "odds"
         }
       }
     },
     {
       "parameters": {
-        "jsCode": "const items = $input.all();\nconst flagged = [];\nconst toProb = function(odds) { return odds > 0 ? 100 / (odds + 100) : (-odds) / (-odds + 100); };\n\nfor (const item of items) {\n  const game = item.json;\n  const bookmakers = game.bookmakers || [];\n  const hardRock = bookmakers.find(function(b) { return b.key === \"hardrockbet\"; });\n  const pinnacle = bookmakers.find(function(b) { return b.key === \"pinnacle\"; });\n  if (!hardRock || !pinnacle) continue;\n\n  const hrMarket = (hardRock.markets || []).find(function(m) { return m.key === \"h2h\"; });\n  const pinMarket = (pinnacle.markets || []).find(function(m) { return m.key === \"h2h\"; });\n  if (!hrMarket || !pinMarket) continue;\n\n  const pinOutcomes = pinMarket.outcomes || [];\n  const pinImplied = pinOutcomes.map(function(o) { return { name: o.name, prob: toProb(o.price) }; });\n  const pinTotal = pinImplied.reduce(function(sum, o) { return sum + o.prob; }, 0);\n  const pinTrue = pinImplied.map(function(o) { return { name: o.name, prob: o.prob / pinTotal }; });\n\n  const hrOutcomes = hrMarket.outcomes || [];\n  for (const hrOutcome of hrOutcomes) {\n    const trueEntry = pinTrue.find(function(o) { return o.name === hrOutcome.name; });\n    if (!trueEntry) continue;\n    const hrImplied = toProb(hrOutcome.price);\n    const edge = trueEntry.prob - hrImplied;\n    if (edge > 0.03) {\n      flagged.push({\n        matchup: (game.home_team || \"\") + \" vs \" + (game.away_team || \"\"),\n        sport: game.sport_title || \"\",\n        commenceTime: game.commence_time || \"\",\n        pick: hrOutcome.name,\n        hardRockOdds: hrOutcome.price,\n        impliedProbPct: Math.round(hrImplied * 1000) / 10,\n        trueProbPct: Math.round(trueEntry.prob * 1000) / 10,\n        edgePct: Math.round(edge * 1000) / 10\n      });\n    }\n  }\n}\n\nflagged.sort(function(a, b) { return b.edgePct - a.edgePct; });\n\nconst lines = flagged.map(function(f) {\n  return f.sport + \": \" + f.matchup + \"\\n  Pick: \" + f.pick + \" (\" + f.hardRockOdds + \")\\n  Hard Rock implies \" + f.impliedProbPct + \"% | sharp-market estimate \" + f.trueProbPct + \"% | edge +\" + f.edgePct + \"%\";\n});\n\nconst disclaimer = \"\\n\\n---\\nAutomated edge estimate based on Hard Rock vs. Pinnacle pricing. Not financial advice, no guarantee of outcome. Bet responsibly.\";\nconst emailBody = (lines.length > 0 ? lines.join(\"\\n\\n\") : \"No bets cleared the edge threshold this run.\") + disclaimer;\n\nreturn [{ json: { flaggedCount: flagged.length, emailBody: emailBody, picks: flagged } }];"
+        "jsCode": "const items = $input.all();\nconst flagged = [];\nconst toProb = function(odds) { return odds > 0 ? 100 / (odds + 100) : (-odds) / (-odds + 100); };\n\nfor (const item of items) {\n  const game = item.json;\n  const bookmakers = game.bookmakers || [];\n  const hardRock = bookmakers.find(function(b) { return b.key === \"hardrockbet\"; });\n  const pinnacle = bookmakers.find(function(b) { return b.key === \"pinnacle\"; });\n  if (!hardRock || !pinnacle) continue;\n\n  const hrMarket = (hardRock.markets || []).find(function(m) { return m.key === \"h2h\"; });\n  const pinMarket = (pinnacle.markets || []).find(function(m) { return m.key === \"h2h\"; });\n  if (!hrMarket || !pinMarket) continue;\n\n  const pinOutcomes = pinMarket.outcomes || [];\n  const pinImplied = pinOutcomes.map(function(o) { return { name: o.name, prob: toProb(o.price) }; });\n  const pinTotal = pinImplied.reduce(function(sum, o) { return sum + o.prob; }, 0);\n  const pinTrue = pinImplied.map(function(o) { return { name: o.name, prob: o.prob / pinTotal }; });\n\n  const hrOutcomes = hrMarket.outcomes || [];\n  for (const hrOutcome of hrOutcomes) {\n    const trueEntry = pinTrue.find(function(o) { return o.name === hrOutcome.name; });\n    if (!trueEntry) continue;\n    const hrImplied = toProb(hrOutcome.price);\n    const edge = trueEntry.prob - hrImplied;\n    if (edge > 0.03) {\n      flagged.push({\n        matchup: (game.home_team || \"\") + \" vs \" + (game.away_team || \"\"),\n        sport: game.sport_title || \"\",\n        commenceTime: game.commence_time || \"\",\n        pick: hrOutcome.name,\n        hardRockOdds: hrOutcome.price,\n        impliedProbPct: Math.round(hrImplied * 1000) / 10,\n        trueProbPct: Math.round(trueEntry.prob * 1000) / 10,\n        edgePct: Math.round(edge * 1000) / 10\n      });\n    }\n  }\n}\n\nflagged.sort(function(a, b) { return b.edgePct - a.edgePct; });\n\nreturn [{ json: { flaggedCount: flagged.length, picks: flagged } }];"
       },
       "id": "8a4aa1f3-40e2-4de7-96d6-5d0a20ed4753",
       "name": "Find Value Bets",
@@ -95,7 +87,7 @@
       "typeVersion": 2,
       "position": [
         448,
-        0
+        112
       ]
     },
     {
@@ -127,15 +119,84 @@
       "typeVersion": 2.3,
       "position": [
         672,
-        0
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here are today's candidate bets, already pre-filtered because Hard Rock's price implies a lower win probability than the Pinnacle-derived market consensus:\n\n{{ JSON.stringify($json.picks) }}\n\nReview each one and decide which are actually worth including in today's digest.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a sports betting analyst helping frame a personal picks email. You receive a JSON array of candidate bets that ALREADY cleared a quantitative edge threshold (Hard Rock's implied probability vs. a Pinnacle-derived de-vigged consensus). Do not invent bets that are not in the provided list, and do not change the odds or edge numbers. Your job: (1) drop any candidates where the numeric edge looks thin or likely to be noise, (2) for each candidate you keep, assign a confidence tier of High, Medium, or Low, and (3) write a short 1-2 sentence rationale per pick in plain English. Keep the tone measured, not hype-y. Always include a brief overallNote summarizing the slate in one sentence."
+        }
+      },
+      "id": "57160cc3-6536-4b75-b766-ba13fe1d5833",
+      "name": "Reasoning Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        896,
+        112
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "84140924-4ec2-428a-b8a7-0754db14cae8",
+      "name": "OpenAI Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        912,
+        336
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "OQzyvnSQgdIJKYgs",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{ \"overallNote\": \"short one-sentence framing of today's slate\", \"picks\": [ { \"matchup\": \"Team A vs Team B\", \"sport\": \"NFL\", \"pick\": \"Team A\", \"hardRockOdds\": 150, \"edgePct\": 3.5, \"confidence\": \"Medium\", \"rationale\": \"One or two sentences explaining why this edge is meaningful or where it could break down.\" } ] }"
+      },
+      "id": "8c7e6c98-e53b-4b3f-bcc0-06262508cecd",
+      "name": "Picks Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1040,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json.output || { overallNote: \"\", picks: [] };\nconst picks = data.picks || [];\nconst skyBlue = \"#0EA5E9\";\nconst orange = \"#F97316\";\nconst darkNavy = \"#0B2545\";\n\nconst cardsHtml = picks.map(function(p) {\n  return '<div style=\"border:1px solid #e2e8f0;border-left:6px solid ' + orange + ';border-radius:8px;padding:16px;margin-bottom:14px;background:#ffffff;\">' +\n    '<div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;\">' +\n    '<span style=\"font-weight:700;color:' + darkNavy + ';font-size:15px;\">' + p.sport + ': ' + p.matchup + '</span>' +\n    '<span style=\"background:' + skyBlue + ';color:#ffffff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;\">' + (p.confidence || \"\").toUpperCase() + '</span>' +\n    '</div>' +\n    '<div style=\"color:' + orange + ';font-weight:700;font-size:14px;margin-bottom:4px;\">Pick: ' + p.pick + ' (' + p.hardRockOdds + ') — edge +' + p.edgePct + '%</div>' +\n    '<div style=\"color:#334155;font-size:13px;line-height:1.5;\">' + p.rationale + '</div>' +\n    '</div>';\n}).join(\"\");\n\nconst bodyContent = picks.length > 0 ? cardsHtml : '<p style=\"color:#334155;\">No bets cleared review this run.</p>';\n\nconst html = '<div style=\"font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:600px;margin:0 auto;\">' +\n  '<div style=\"background:' + skyBlue + ';padding:20px 24px;border-radius:8px 8px 0 0;\">' +\n  '<h1 style=\"color:#ffffff;margin:0;font-size:20px;\">Hard Rock Value Bets</h1>' +\n  '<p style=\"color:#e0f2fe;margin:6px 0 0;font-size:13px;\">' + (data.overallNote || \"\") + '</p>' +\n  '</div>' +\n  '<div style=\"padding:20px 24px;background:#f8fafc;\">' + bodyContent + '</div>' +\n  '<div style=\"padding:16px 24px;border-top:2px solid ' + orange + ';color:#94a3b8;font-size:11px;\">Automated edge estimate based on Hard Rock vs. Pinnacle pricing, reviewed by an AI analyst step. Not financial advice, no guarantee of outcome. Bet responsibly.</div>' +\n  '</div>';\n\nreturn [{ json: { emailHtml: html, pickCount: picks.length } }];"
+      },
+      "id": "74ad4b70-64bd-44dd-ae36-c0dfc3534304",
+      "name": "Build Email HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        112
       ]
     },
     {
       "parameters": {
         "sendTo": "mnevelus1@gmail.com",
         "subject": "=Hard Rock Value Bets — {{ $now.toFormat(\"MMMM d\") }}",
-        "emailType": "text",
-        "message": "={{ $json.emailBody }}",
+        "message": "={{ $json.emailHtml }}",
         "options": {
           "appendAttribution": false
         }
@@ -145,16 +206,52 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        896,
-        0
+        1472,
+        112
       ],
-      "webhookId": "067b08e4-4be2-4708-acce-52e0ebe3b3ee",
+      "webhookId": "5c6aaa50-837c-4854-8200-ab6073eabe91",
       "credentials": {
         "gmailOAuth2": {
           "id": "XVr5TpHD19VfVgmt",
           "name": "dynamack gmail"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "UTxRCxd3l2buk6Ze",
+          "cachedResultName": "Bet Feedback"
+        },
+        "limit": 10,
+        "orderBy": true,
+        "orderByColumn": "receivedAt"
+      },
+      "id": "6568fa17-efe4-4484-908d-d21e810aacfa",
+      "name": "Fetch Recent Feedback",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        608,
+        784
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst feedbackRows = items.filter(function(item) { return item.json && item.json.receivedAt; }).map(function(item) {\n  return {\n    receivedAt: item.json.receivedAt,\n    matchup: item.json.matchup,\n    sentiment: item.json.sentiment,\n    feedbackSummary: item.json.feedbackSummary\n  };\n});\nreturn [{ json: { feedbackRows: feedbackRows } }];"
+      },
+      "id": "587fcf47-537b-4ee0-909e-627a85f66b21",
+      "name": "Aggregate Feedback",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        784
+      ]
     }
   ],
   "connections": {
@@ -191,11 +288,77 @@
         ]
       ]
     },
-    "Has Value Bets?": {
+    "Reasoning Agent": {
+      "main": [
+        [
+          {
+            "node": "Build Email HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Reasoning Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Picks Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Reasoning Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Email HTML": {
       "main": [
         [
           {
             "node": "Email Picks Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Value Bets?": {
+      "main": [
+        [
+          {
+            "node": "Fetch Recent Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Recent Feedback": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Feedback": {
+      "main": [
+        [
+          {
+            "node": "Reasoning Agent",
             "type": "main",
             "index": 0
           }
@@ -232,10 +395,10 @@
   "shared": [
     {
       "role": "workflow:owner",
-      "workflowId": "NrOz1NONbXWEV673",
+      "workflowId": "pPfTwZXc2nkBX2IG",
       "projectId": "849yyMdpMvSsDroi",
-      "createdAt": "2026-08-23T23:59:44.773Z",
-      "updatedAt": "2026-08-23T23:59:44.773Z"
+      "createdAt": "2026-08-24T00:10:44.398Z",
+      "updatedAt": "2026-08-24T00:10:44.398Z"
     }
   ],
   "activeVersion": null
