@@ -2,9 +2,9 @@
 
 This repo is automatically updated every Friday at 5 PM ET with a JSON export of every workflow in this n8n instance. Each workflow lives in `workflows/<name>.json`.
 
-Last synced: 2026-10-02T17:01:32.581-04:00
+Last synced: 2026-10-16T17:01:31.833-04:00
 
-Total workflows: 50
+Total workflows: 53
 
 | Name | Status | Last Updated |
 |------|--------|---------------|
@@ -37,6 +37,7 @@ Total workflows: 50
 | My workflow 4 | Inactive | 2026-08-23 |
 | Medical Courier-Job -> Driver flow | Inactive | 2026-08-23 |
 | L2 Password Review | Inactive | 2026-08-23 |
+| Social Weekly Insights Digest | Inactive | 2026-10-02 |
 | Client Onboarding | Inactive | 2026-03-05 |
 | Notion to ClickUp TUB Task Sync | Inactive | 2026-08-23 |
 | L2 Ship Draft — ADD-ON nodes for L2 Order Tracking | Inactive | 2026-08-23 |
@@ -53,8 +54,10 @@ Total workflows: 50
 | Task Bot copy | Inactive | 2026-08-23 |
 | My workflow 2 | Inactive | 2026-03-05 |
 | Hard Rock Value Bets Digest | Inactive | 2026-08-24 |
+| Social Autopost (Instagram + Facebook) | Inactive | 2026-10-02 |
 | Daily Job Search Digest | Inactive | 2026-08-23 |
 | ARCHIVED — Jarvis Calendar Test (merged into production 2026-08-24) | Inactive | 2026-08-25 |
 | Send text notify through Trilio | Inactive | 2026-03-05 |
+| Winter Arc Auto-Editor | Inactive | 2026-10-16 |
 | Morning Calendar Text | Inactive | 2026-08-15 |
 | shipping nocifs | Inactive | 2026-03-05 |
